@@ -46,7 +46,23 @@ import {
   Search,
   Trash2,
   Upload,
+  X,
+  Globe,
+  Play,
+  Pause,
+  Filter,
+  ArrowUpDown,
+  Copy,
+  Check,
+  Crosshair,
+  MousePointer,
+  Save,
 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import LiveScrapingPreview from "./LiveScrapingPreview";
+import ScrapedDataExport from "./ScrapedDataExport";
 
 interface ScrapingJob {
   id: string;
@@ -56,6 +72,13 @@ interface ScrapingJob {
   lastRun: Date | null;
   nextRun: Date | null;
   dataCount: number;
+  pageCount?: number;
+  errorCount?: number;
+  resultSize?: string;
+  urlType?: "single" | "multiple" | "json";
+  urls?: string[];
+  outputType?: "text" | "html" | "metadata" | "json";
+  selectors?: SelectorGroup[];
 }
 
 interface ScrapedData {
@@ -65,15 +88,68 @@ interface ScrapedData {
   url: string;
   timestamp: Date;
   jobId: string;
+  format?: "text" | "html" | "metadata" | "json";
+  size?: string;
+}
+
+interface SelectorGroup {
+  id: string;
+  name: string;
+  domain: string;
+  pageType: string;
+  selectors: Selector[];
+}
+
+interface Selector {
+  id: string;
+  name: string;
+  cssPath: string;
+  xPath?: string;
+  description?: string;
+}
+
+interface ScrapingResultFilter {
+  excludeHeaders: boolean;
+  excludeFooters: boolean;
+  excludeAds: boolean;
+  excludeMedia: boolean;
+  excludePagination: boolean;
 }
 
 const WebScrapingPanel = () => {
   const [activeTab, setActiveTab] = useState("jobs-list");
   const [selectedJob, setSelectedJob] = useState<ScrapingJob | null>(null);
+  const [selectedData, setSelectedData] = useState<ScrapedData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date(),
   );
   const [isRunningJob, setIsRunningJob] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [livePreviewUrl, setLivePreviewUrl] = useState("");
+  const [selectedElement, setSelectedElement] = useState<string | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectorGroups, setSelectorGroups] = useState<SelectorGroup[]>([]);
+  const [currentSelectorGroup, setCurrentSelectorGroup] =
+    useState<SelectorGroup | null>(null);
+  const [resultFilters, setResultFilters] = useState<ScrapingResultFilter>({
+    excludeHeaders: false,
+    excludeFooters: false,
+    excludeAds: true,
+    excludeMedia: false,
+    excludePagination: true,
+  });
+  const [urlType, setUrlType] = useState<"single" | "multiple" | "json">(
+    "single",
+  );
+  const [outputType, setOutputType] = useState<
+    "text" | "html" | "metadata" | "json"
+  >("text");
+  const [exportFormat, setExportFormat] = useState<
+    "csv" | "json" | "markdown" | "txt"
+  >("json");
+  const [selectorName, setSelectorName] = useState("");
+  const [selectorDescription, setSelectorDescription] = useState("");
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
 
   // Mock data for jobs
   const mockJobs: ScrapingJob[] = [
@@ -85,6 +161,11 @@ const WebScrapingPanel = () => {
       lastRun: new Date(2023, 5, 15),
       nextRun: new Date(2023, 6, 15),
       dataCount: 128,
+      pageCount: 42,
+      errorCount: 0,
+      resultSize: "2.4 MB",
+      urlType: "single",
+      outputType: "text",
     },
     {
       id: "2",
@@ -94,6 +175,15 @@ const WebScrapingPanel = () => {
       lastRun: new Date(2023, 5, 10),
       nextRun: null,
       dataCount: 45,
+      pageCount: 15,
+      errorCount: 2,
+      resultSize: "1.1 MB",
+      urlType: "multiple",
+      urls: [
+        "https://example.com/blog/page1",
+        "https://example.com/blog/page2",
+      ],
+      outputType: "html",
     },
     {
       id: "3",
@@ -103,6 +193,8 @@ const WebScrapingPanel = () => {
       lastRun: null,
       nextRun: new Date(2023, 6, 20),
       dataCount: 0,
+      urlType: "single",
+      outputType: "text",
     },
     {
       id: "4",
@@ -112,6 +204,59 @@ const WebScrapingPanel = () => {
       lastRun: new Date(2023, 5, 8),
       nextRun: null,
       dataCount: 0,
+      pageCount: 0,
+      errorCount: 3,
+      resultSize: "0 KB",
+      urlType: "json",
+      outputType: "json",
+    },
+  ];
+
+  // Mock data for selector groups
+  const mockSelectorGroups: SelectorGroup[] = [
+    {
+      id: "sg1",
+      name: "Documentation Pages",
+      domain: "example.com",
+      pageType: "documentation",
+      selectors: [
+        {
+          id: "s1",
+          name: "Main Content",
+          cssPath: "#main-content",
+          xPath: "//*[@id='main-content']",
+          description: "Main content area of documentation pages",
+        },
+        {
+          id: "s2",
+          name: "Article Title",
+          cssPath: ".article-title",
+          xPath: "//h1[@class='article-title']",
+          description: "Title of the documentation article",
+        },
+      ],
+    },
+    {
+      id: "sg2",
+      name: "Blog Posts",
+      domain: "example.com",
+      pageType: "blog",
+      selectors: [
+        {
+          id: "s3",
+          name: "Post Content",
+          cssPath: ".post-content",
+          xPath: "//div[@class='post-content']",
+          description: "Main content of blog posts",
+        },
+        {
+          id: "s4",
+          name: "Post Title",
+          cssPath: ".post-title",
+          xPath: "//h1[@class='post-title']",
+          description: "Title of the blog post",
+        },
+      ],
     },
   ];
 
@@ -156,6 +301,10 @@ const WebScrapingPanel = () => {
     setActiveTab("data-review");
   };
 
+  const handleViewDataDetails = (data: ScrapedData) => {
+    setSelectedData(data);
+  };
+
   const handleCreateNewJob = () => {
     setSelectedJob(null);
     setActiveTab("create-edit");
@@ -169,6 +318,14 @@ const WebScrapingPanel = () => {
       // After job completes, show the data review tab
       setActiveTab("data-review");
     }, 2000);
+  };
+
+  const handleCopyContent = () => {
+    if (selectedData) {
+      navigator.clipboard.writeText(selectedData.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const getStatusBadge = (status: ScrapingJob["status"]) => {
@@ -186,6 +343,41 @@ const WebScrapingPanel = () => {
     }
   };
 
+  // Handler for saving selectors from LiveScrapingPreview
+  const handleSaveSelector = (
+    selector: Omit<Selector, "id">,
+    groupId: string,
+  ) => {
+    // Find the group
+    const groupIndex = mockSelectorGroups.findIndex((g) => g.id === groupId);
+    if (groupIndex === -1) return;
+
+    // Create a new selector with an ID
+    const newSelector: Selector = {
+      id: `selector-${Date.now()}`,
+      ...selector,
+    };
+
+    // Add the selector to the group
+    const updatedGroups = [...mockSelectorGroups];
+    updatedGroups[groupIndex].selectors.push(newSelector);
+    setSelectorGroups(updatedGroups);
+  };
+
+  // Handler for creating a new selector group
+  const handleCreateGroup = () => {
+    // In a real implementation, this would open a modal to create a new group
+    const newGroup: SelectorGroup = {
+      id: `group-${Date.now()}`,
+      name: "New Group",
+      domain: "example.com",
+      pageType: "custom",
+      selectors: [],
+    };
+
+    setSelectorGroups([...mockSelectorGroups, newGroup]);
+  };
+
   return (
     <div className="bg-background p-6 rounded-lg w-full h-full">
       <div className="flex justify-between items-center mb-6">
@@ -201,7 +393,10 @@ const WebScrapingPanel = () => {
           <TabsTrigger value="create-edit">
             {selectedJob ? "Edit Job" : "Create Job"}
           </TabsTrigger>
+          <TabsTrigger value="live-preview">Live Preview</TabsTrigger>
+          <TabsTrigger value="selector-groups">Selector Groups</TabsTrigger>
           <TabsTrigger value="data-review">Data Review</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="jobs-list" className="space-y-4">
@@ -242,6 +437,9 @@ const WebScrapingPanel = () => {
                     <TableHead>Last Run</TableHead>
                     <TableHead>Next Run</TableHead>
                     <TableHead>Data Count</TableHead>
+                    <TableHead>Page Count</TableHead>
+                    <TableHead>Errors</TableHead>
+                    <TableHead>Result Size</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -250,7 +448,15 @@ const WebScrapingPanel = () => {
                     <TableRow key={job.id}>
                       <TableCell className="font-medium">{job.name}</TableCell>
                       <TableCell className="truncate max-w-xs">
-                        {job.url}
+                        <a
+                          href={job.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline flex items-center"
+                        >
+                          {job.url}
+                          <Globe className="h-3 w-3 ml-1" />
+                        </a>
                       </TableCell>
                       <TableCell>{getStatusBadge(job.status)}</TableCell>
                       <TableCell>
@@ -264,6 +470,11 @@ const WebScrapingPanel = () => {
                           : "-"}
                       </TableCell>
                       <TableCell>{job.dataCount}</TableCell>
+                      <TableCell>{job.pageCount || "-"}</TableCell>
+                      <TableCell>
+                        {job.errorCount !== undefined ? job.errorCount : "-"}
+                      </TableCell>
+                      <TableCell>{job.resultSize || "-"}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button
@@ -313,9 +524,7 @@ const WebScrapingPanel = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="job-name" className="text-sm font-medium">
-                    Job Name
-                  </label>
+                  <Label htmlFor="job-name">Job Name</Label>
                   <Input
                     id="job-name"
                     placeholder="e.g., Product Documentation"
@@ -324,21 +533,68 @@ const WebScrapingPanel = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="base-url" className="text-sm font-medium">
-                    Base URL
-                  </label>
+                  <Label htmlFor="url-type">URL Type</Label>
+                  <Select
+                    value={urlType}
+                    onValueChange={(value) =>
+                      setUrlType(value as "single" | "multiple" | "json")
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select URL type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="single">Single URL</SelectItem>
+                      <SelectItem value="multiple">Multiple URLs</SelectItem>
+                      <SelectItem value="json">JSON Bulk URLs</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {urlType === "single" && (
+                <div className="space-y-2">
+                  <Label htmlFor="base-url">URL</Label>
                   <Input
                     id="base-url"
                     placeholder="https://example.com/docs"
                     defaultValue={selectedJob?.url || ""}
                   />
                 </div>
-              </div>
+              )}
+
+              {urlType === "multiple" && (
+                <div className="space-y-2">
+                  <Label htmlFor="multiple-urls">URLs (one per line)</Label>
+                  <Textarea
+                    id="multiple-urls"
+                    placeholder="https://example.com/docs/page1\nhttps://example.com/docs/page2"
+                    className="min-h-[100px]"
+                    defaultValue={selectedJob?.urls?.join("\n") || ""}
+                  />
+                </div>
+              )}
+
+              {urlType === "json" && (
+                <div className="space-y-2">
+                  <Label htmlFor="json-urls">JSON URLs</Label>
+                  <Textarea
+                    id="json-urls"
+                    placeholder='[{"url": "https://example.com/docs/page1", "params": {"key": "value"}}, {"url": "https://example.com/docs/page2"}]'
+                    className="min-h-[100px]"
+                    defaultValue={
+                      selectedJob?.urls
+                        ? JSON.stringify(selectedJob.urls, null, 2)
+                        : ""
+                    }
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
-                <label htmlFor="url-patterns" className="text-sm font-medium">
+                <Label htmlFor="url-patterns">
                   URL Patterns to Include (one per line)
-                </label>
+                </Label>
                 <Textarea
                   id="url-patterns"
                   placeholder="/docs/*\n/blog/*\n/faq/*"
@@ -347,12 +603,9 @@ const WebScrapingPanel = () => {
               </div>
 
               <div className="space-y-2">
-                <label
-                  htmlFor="exclude-patterns"
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="exclude-patterns">
                   URL Patterns to Exclude (one per line)
-                </label>
+                </Label>
                 <Textarea
                   id="exclude-patterns"
                   placeholder="/docs/archived/*\n/blog/drafts/*"
@@ -362,7 +615,7 @@ const WebScrapingPanel = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Scraping Depth</label>
+                  <Label>Scraping Depth</Label>
                   <Select defaultValue="2">
                     <SelectTrigger>
                       <SelectValue placeholder="Select depth" />
@@ -386,26 +639,54 @@ const WebScrapingPanel = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Content Extraction
-                  </label>
-                  <Select defaultValue="main">
+                  <Label>Output Type</Label>
+                  <Select
+                    value={outputType}
+                    onValueChange={(value) =>
+                      setOutputType(
+                        value as "text" | "html" | "metadata" | "json",
+                      )
+                    }
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select content to extract" />
+                      <SelectValue placeholder="Select output type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="main">Main content only</SelectItem>
-                      <SelectItem value="full">Full page content</SelectItem>
-                      <SelectItem value="custom">
-                        Custom CSS selectors
-                      </SelectItem>
+                      <SelectItem value="text">Text</SelectItem>
+                      <SelectItem value="html">HTML</SelectItem>
+                      <SelectItem value="metadata">Metadata</SelectItem>
+                      <SelectItem value="json">JSON</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Schedule</label>
+                <Label>Selector Group</Label>
+                <div className="flex gap-2">
+                  <Select defaultValue={mockSelectorGroups[0].id}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Select a selector group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockSelectorGroups.map((group) => (
+                        <SelectItem key={group.id} value={group.id}>
+                          {group.name} ({group.domain})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    onClick={() => setActiveTab("selector-groups")}
+                  >
+                    <Plus className="h-4 w-4 mr-1" /> New Group
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Schedule</Label>
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
                     <Select defaultValue="manual">
@@ -469,6 +750,89 @@ const WebScrapingPanel = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <Label>Result Filters</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="exclude-headers">Exclude Headers</Label>
+                      <Switch
+                        id="exclude-headers"
+                        checked={resultFilters.excludeHeaders}
+                        onCheckedChange={(checked) =>
+                          setResultFilters({
+                            ...resultFilters,
+                            excludeHeaders: checked,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="exclude-footers">Exclude Footers</Label>
+                      <Switch
+                        id="exclude-footers"
+                        checked={resultFilters.excludeFooters}
+                        onCheckedChange={(checked) =>
+                          setResultFilters({
+                            ...resultFilters,
+                            excludeFooters: checked,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="exclude-ads">Exclude Ads</Label>
+                      <Switch
+                        id="exclude-ads"
+                        checked={resultFilters.excludeAds}
+                        onCheckedChange={(checked) =>
+                          setResultFilters({
+                            ...resultFilters,
+                            excludeAds: checked,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="exclude-media">Exclude Media</Label>
+                      <Switch
+                        id="exclude-media"
+                        checked={resultFilters.excludeMedia}
+                        onCheckedChange={(checked) =>
+                          setResultFilters({
+                            ...resultFilters,
+                            excludeMedia: checked,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="exclude-pagination">
+                        Exclude Pagination
+                      </Label>
+                      <Switch
+                        id="exclude-pagination"
+                        checked={resultFilters.excludePagination}
+                        onCheckedChange={(checked) =>
+                          setResultFilters({
+                            ...resultFilters,
+                            excludePagination: checked,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button
@@ -497,6 +861,201 @@ const WebScrapingPanel = () => {
                 </Button>
                 <Button>{selectedJob ? "Update Job" : "Create Job"}</Button>
               </div>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="live-preview">
+          <Card>
+            <CardHeader>
+              <CardTitle>Live Scraping Preview</CardTitle>
+              <CardDescription>
+                Preview a website and select elements to scrape
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LiveScrapingPreview
+                selectorGroups={mockSelectorGroups}
+                onSaveSelector={handleSaveSelector}
+                onCreateGroup={handleCreateGroup}
+              />
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setActiveTab("create-edit")}
+              >
+                Back to Job Configuration
+              </Button>
+              <Button onClick={() => setActiveTab("selector-groups")}>
+                Manage Selector Groups
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="selector-groups">
+          <Card>
+            <CardHeader>
+              <CardTitle>Selector Groups</CardTitle>
+              <CardDescription>
+                Manage and organize your CSS selectors by domain and page type
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center">
+                <Input placeholder="Search groups..." className="max-w-sm" />
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" /> Create New Group
+                </Button>
+              </div>
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Domain</TableHead>
+                    <TableHead>Page Type</TableHead>
+                    <TableHead>Selectors</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockSelectorGroups.map((group) => (
+                    <TableRow key={group.id}>
+                      <TableCell className="font-medium">
+                        {group.name}
+                      </TableCell>
+                      <TableCell>{group.domain}</TableCell>
+                      <TableCell>{group.pageType}</TableCell>
+                      <TableCell>{group.selectors.length}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              {currentSelectorGroup && (
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>
+                      Edit Group: {currentSelectorGroup.name}
+                    </CardTitle>
+                    <CardDescription>
+                      Domain: {currentSelectorGroup.domain} | Page Type:{" "}
+                      {currentSelectorGroup.pageType}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="group-name">Group Name</Label>
+                          <Input
+                            id="group-name"
+                            value={currentSelectorGroup.name}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="group-domain">Domain</Label>
+                          <Input
+                            id="group-domain"
+                            value={currentSelectorGroup.domain}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="group-page-type">Page Type</Label>
+                          <Input
+                            id="group-page-type"
+                            value={currentSelectorGroup.pageType}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <Label>Selectors</Label>
+                          <Button variant="outline" size="sm">
+                            <Plus className="h-4 w-4 mr-1" /> Add Selector
+                          </Button>
+                        </div>
+
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Name</TableHead>
+                              <TableHead>CSS Path</TableHead>
+                              <TableHead>Description</TableHead>
+                              <TableHead>Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {currentSelectorGroup.selectors.map((selector) => (
+                              <TableRow key={selector.id}>
+                                <TableCell>{selector.name}</TableCell>
+                                <TableCell className="font-mono text-xs">
+                                  {selector.cssPath}
+                                </TableCell>
+                                <TableCell>{selector.description}</TableCell>
+                                <TableCell>
+                                  <div className="flex space-x-2">
+                                    <Button variant="outline" size="sm">
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-red-500 hover:text-red-700"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentSelectorGroup(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button>Save Group</Button>
+                  </CardFooter>
+                </Card>
+              )}
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setActiveTab("create-edit")}
+              >
+                Back to Job Configuration
+              </Button>
+              <Button onClick={() => setActiveTab("live-preview")}>
+                Go to Live Preview
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -540,13 +1099,23 @@ const WebScrapingPanel = () => {
                     <Upload className="mr-2 h-4 w-4" />
                     Save as Context
                   </Button>
-                  <Select defaultValue="json">
+                  <Select
+                    value={exportFormat}
+                    onValueChange={(value) =>
+                      setExportFormat(
+                        value as "csv" | "json" | "markdown" | "txt",
+                      )
+                    }
+                  >
                     <SelectTrigger className="w-[150px]">
                       <SelectValue placeholder="Export format" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="json">Export as JSON</SelectItem>
                       <SelectItem value="csv">Export as CSV</SelectItem>
+                      <SelectItem value="markdown">
+                        Export as Markdown
+                      </SelectItem>
                       <SelectItem value="txt">Export as Text</SelectItem>
                     </SelectContent>
                   </Select>
@@ -557,47 +1126,125 @@ const WebScrapingPanel = () => {
                 </div>
               </div>
 
-              <div className="border rounded-md">
-                {mockScrapedData
-                  .filter(
-                    (data) => !selectedJob || data.jobId === selectedJob.id,
-                  )
-                  .map((data) => (
-                    <div key={data.id} className="border-b p-4 last:border-b-0">
-                      <div className="flex justify-between mb-2">
-                        <h3 className="font-medium text-lg">{data.title}</h3>
-                        <div className="text-sm text-muted-foreground">
-                          {format(data.timestamp, "MMM dd, yyyy")}
-                        </div>
-                      </div>
-                      <p className="text-muted-foreground mb-2">
-                        {data.content}
-                      </p>
-                      <div className="flex justify-between items-center">
+              {selectedData ? (
+                <Card>
+                  <CardHeader className="flex flex-row items-start justify-between">
+                    <div>
+                      <CardTitle>{selectedData.title}</CardTitle>
+                      <CardDescription>
                         <a
-                          href={data.url}
+                          href={selectedData.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-500 hover:underline"
+                          className="text-blue-500 hover:underline flex items-center"
                         >
-                          {data.url}
+                          {selectedData.url}
+                          <Globe className="h-3 w-3 ml-1" />
                         </a>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-4 w-4 mr-1" /> View
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" /> Delete
-                          </Button>
+                      </CardDescription>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedData(null)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div className="text-sm text-muted-foreground">
+                          <span className="font-medium">Job: </span>
+                          {
+                            mockJobs.find((j) => j.id === selectedData.jobId)
+                              ?.name
+                          }
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          <span className="font-medium">Scraped: </span>
+                          {format(selectedData.timestamp, "PPP p")}
                         </div>
                       </div>
+
+                      <div className="relative">
+                        <div className="bg-muted p-4 rounded-md whitespace-pre-wrap">
+                          {selectedData.content}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="absolute top-2 right-2"
+                          onClick={handleCopyContent}
+                        >
+                          {copied ? (
+                            <Check className="h-4 w-4" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </div>
-                  ))}
-              </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button variant="outline" size="sm">
+                      <ArrowUpDown className="mr-2 h-4 w-4" /> Process with AI
+                    </Button>
+                    <Button size="sm">
+                      <Plus className="mr-2 h-4 w-4" /> Add to Knowledge Base
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ) : (
+                <div className="border rounded-md">
+                  {mockScrapedData
+                    .filter(
+                      (data) => !selectedJob || data.jobId === selectedJob.id,
+                    )
+                    .map((data) => (
+                      <div
+                        key={data.id}
+                        className="border-b p-4 last:border-b-0"
+                      >
+                        <div className="flex justify-between mb-2">
+                          <h3 className="font-medium text-lg">{data.title}</h3>
+                          <div className="text-sm text-muted-foreground">
+                            {format(data.timestamp, "MMM dd, yyyy")}
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground mb-2">
+                          {data.content}
+                        </p>
+                        <div className="flex justify-between items-center">
+                          <a
+                            href={data.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-500 hover:underline"
+                          >
+                            {data.url}
+                          </a>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewDataDetails(data)}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> View
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" /> Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button
@@ -616,6 +1263,126 @@ const WebScrapingPanel = () => {
               </div>
             </CardFooter>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <Card>
+            <CardHeader>
+              <CardTitle>Scraping Engine Settings</CardTitle>
+              <CardDescription>
+                Configure global settings for the web scraping engine
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Performance</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="concurrent-jobs">Concurrent Jobs</Label>
+                    <Input
+                      id="concurrent-jobs"
+                      type="number"
+                      min="1"
+                      max="10"
+                      defaultValue="3"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="timeout">Request Timeout (seconds)</Label>
+                    <Input
+                      id="timeout"
+                      type="number"
+                      min="1"
+                      max="60"
+                      defaultValue="30"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Content Processing</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="auto-clean">Auto-Clean Content</Label>
+                    <Switch id="auto-clean" defaultChecked />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Automatically clean and format scraped content
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="content-format">Default Content Format</Label>
+                  <Select defaultValue="markdown">
+                    <SelectTrigger id="content-format">
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="plain">Plain Text</SelectItem>
+                      <SelectItem value="markdown">Markdown</SelectItem>
+                      <SelectItem value="html">HTML</SelectItem>
+                      <SelectItem value="json">JSON</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Storage & Retention</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="retention-period">
+                      Data Retention Period (days)
+                    </Label>
+                    <Input
+                      id="retention-period"
+                      type="number"
+                      min="1"
+                      max="365"
+                      defaultValue="90"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      0 = keep forever
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="storage-limit">Storage Limit (MB)</Label>
+                    <Input
+                      id="storage-limit"
+                      type="number"
+                      min="100"
+                      max="10000"
+                      defaultValue="1000"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      0 = no limit
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="ml-auto">Save Settings</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="export-data">
+          <ScrapedDataExport
+            dataCount={
+              selectedJob
+                ? mockScrapedData.filter((d) => d.jobId === selectedJob.id)
+                    .length
+                : mockScrapedData.length
+            }
+            onExport={(format, filters) =>
+              console.log("Exporting data:", format, filters)
+            }
+            onSaveToKnowledgeBase={() =>
+              console.log("Saving to knowledge base")
+            }
+          />
         </TabsContent>
       </Tabs>
     </div>

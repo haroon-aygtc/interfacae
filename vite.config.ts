@@ -27,8 +27,13 @@ export default defineConfig({
     allowedHosts: process.env.TEMPO === "true" ? true : undefined,
     cors: true,
     hmr: {
-      host: "localhost",
-      protocol: "ws",
+      clientPort: process.env.TEMPO === "true" ? 443 : 3000,
+      host:
+        process.env.TEMPO === "true"
+          ? "festive-leakey4-993dm.view-3.tempo-dev.app"
+          : "localhost",
+      protocol: process.env.TEMPO === "true" ? "wss" : "ws",
+      timeout: 120000,
     },
   },
 });
