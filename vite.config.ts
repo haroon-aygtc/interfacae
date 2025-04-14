@@ -24,7 +24,7 @@ export default defineConfig({
     port: 3000,
     strictPort: false,
     // Using proper typing for allowedHosts
-    allowedHosts: process.env.TEMPO === "true" ? "all" : undefined,
+    allowedHosts: process.env.TEMPO === "true" ? true : undefined,
     cors: true,
     hmr: {
       host: "localhost",
