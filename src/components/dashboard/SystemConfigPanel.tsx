@@ -33,8 +33,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const SystemConfigPanel = () => {
-  const [activeTab, setActiveTab] = useState("authentication");
+interface SystemConfigPanelProps {
+  defaultTab?: string;
+}
+
+const SystemConfigPanel: React.FC<SystemConfigPanelProps> = ({ defaultTab = "authentication" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [saveStatus, setSaveStatus] = useState<
     "idle" | "saving" | "success" | "error"
   >("idle");

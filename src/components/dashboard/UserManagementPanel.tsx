@@ -69,8 +69,12 @@ interface RoleData {
   userCount: number;
 }
 
-const UserManagementPanel = () => {
-  const [activeTab, setActiveTab] = useState("users");
+interface UserManagementPanelProps {
+  defaultTab?: string;
+}
+
+const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ defaultTab = "users" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
 
@@ -536,6 +540,8 @@ const UserManagementPanel = () => {
                       id="status-active"
                       name="status"
                       value="active"
+                      aria-label="Active status"
+                      placeholder="Active"
                       defaultChecked={
                         selectedUser?.status === "active" || !selectedUser
                       }
@@ -551,6 +557,8 @@ const UserManagementPanel = () => {
                       id="status-inactive"
                       name="status"
                       value="inactive"
+                      aria-label="Inactive status"
+                      placeholder="Inactive"
                       defaultChecked={selectedUser?.status === "inactive"}
                       className="h-4 w-4 text-blue-600"
                     />
@@ -564,6 +572,8 @@ const UserManagementPanel = () => {
                       id="status-pending"
                       name="status"
                       value="pending"
+                      aria-label="Pending status"
+                      placeholder="Pending"
                       defaultChecked={selectedUser?.status === "pending"}
                       className="h-4 w-4 text-blue-600"
                     />
@@ -635,6 +645,7 @@ const UserManagementPanel = () => {
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="Manage Users"
                           type="checkbox"
                           id="perm-manage-users"
                           defaultChecked={selectedRole?.permissions.includes(
@@ -651,6 +662,7 @@ const UserManagementPanel = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="Manage Roles"
                           type="checkbox"
                           id="perm-manage-roles"
                           defaultChecked={selectedRole?.permissions.includes(
@@ -671,6 +683,7 @@ const UserManagementPanel = () => {
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="View Content"
                           type="checkbox"
                           id="perm-view-content"
                           defaultChecked={selectedRole?.permissions.includes(
@@ -687,6 +700,7 @@ const UserManagementPanel = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="Manage Content"
                           type="checkbox"
                           id="perm-manage-content"
                           defaultChecked={selectedRole?.permissions.includes(
@@ -709,6 +723,7 @@ const UserManagementPanel = () => {
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="View Analytics"
                           type="checkbox"
                           id="perm-view-analytics"
                           defaultChecked={selectedRole?.permissions.includes(
@@ -725,6 +740,7 @@ const UserManagementPanel = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="Export Data"
                           type="checkbox"
                           id="perm-export-data"
                           defaultChecked={selectedRole?.permissions.includes(
@@ -745,6 +761,7 @@ const UserManagementPanel = () => {
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <input
+                          aria-label="Manage Settings"
                           type="checkbox"
                           id="perm-manage-settings"
                           defaultChecked={selectedRole?.permissions.includes(

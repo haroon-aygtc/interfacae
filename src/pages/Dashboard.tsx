@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -8,13 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Sidebar from "@/components/dashboard/Sidebar";
-import AIModelConfig from "@/components/dashboard/AIModelConfig";
-import WebScrapingPanel from "@/components/dashboard/WebScrapingPanel";
-import IntegrationPanel from "@/components/dashboard/IntegrationPanel";
-import ContextRulesPanel from "@/components/dashboard/ContextRulesPanel";
-import PromptTemplatesPanel from "@/components/dashboard/PromptTemplatesPanel";
-import AnalyticsPanel from "@/components/dashboard/AnalyticsPanel";
-import SystemConfigPanel from "@/components/dashboard/SystemConfigPanel";
+import { ROUTES } from "../routes";
 import {
   BarChart,
   LineChart,
@@ -26,38 +21,15 @@ import {
   Sparkles,
 } from "lucide-react";
 
-type DashboardSection =
-  | "overview"
-  | "ai-models"
-  | "context-rules"
-  | "prompt-templates"
-  | "analytics"
-  | "web-scraping"
-  | "integration"
-  | "system-config";
-
 const Dashboard = () => {
-  const [activeSection, setActiveSection] =
-    useState<DashboardSection>("overview");
+  const location = useLocation();
+
+  // Determine if we're on the main dashboard page
+  const isOverview = location.pathname === ROUTES.DASHBOARD;
 
   const renderContent = () => {
-    switch (activeSection) {
-      case "ai-models":
-        return <AIModelConfig />;
-      case "context-rules":
-        return <ContextRulesPanel />;
-      case "prompt-templates":
-        return <PromptTemplatesPanel />;
-      case "analytics":
-        return <AnalyticsPanel />;
-      case "web-scraping":
-        return <WebScrapingPanel />;
-      case "integration":
-        return <IntegrationPanel />;
-      case "system-config":
-        return <SystemConfigPanel />;
-      case "overview":
-      default:
+    // Only render dashboard content on the main dashboard page
+    if (isOverview) {
         return (
           <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -411,27 +383,10 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-slate-50">
-      <Sidebar
-        activeSection={activeSection}
-        onSectionChange={setActiveSection}
-      />
+      <Sidebar />
       <div className="flex-1 overflow-auto p-6">
         <h1 className="text-2xl font-bold mb-6">
-          {activeSection === "overview"
-            ? "Dashboard Overview"
-            : activeSection === "ai-models"
-              ? "AI Model Configuration"
-              : activeSection === "context-rules"
-                ? "Context Rules Management"
-                : activeSection === "prompt-templates"
-                  ? "Prompt Templates"
-                  : activeSection === "analytics"
-                    ? "Analytics Dashboard"
-                    : activeSection === "web-scraping"
-                      ? "Web Scraping Management"
-                      : activeSection === "integration"
-                        ? "Integration Settings"
-                        : "System Configuration"}
+          Dashboard Overview
         </h1>
         {renderContent()}
       </div>

@@ -136,7 +136,11 @@ interface AIConfig {
   customInstructions: string;
 }
 
-const AIIntegrationPanel: React.FC = () => {
+interface AIIntegrationPanelProps {
+  defaultTab?: string;
+}
+
+const AIIntegrationPanel: React.FC<AIIntegrationPanelProps> = ({ defaultTab = "configuration" }) => {
   // Mock data
   const [prompts, setPrompts] = useState<Prompt[]>([
     {
@@ -295,7 +299,7 @@ const AIIntegrationPanel: React.FC = () => {
   const [testQuery, setTestQuery] = useState("");
   const [testResponse, setTestResponse] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState("configuration");
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [configName, setConfigName] = useState("Default Configuration");
   const [isSaving, setIsSaving] = useState(false);
   const [savedConfigs, setSavedConfigs] = useState<AIConfig[]>([]);
@@ -1339,7 +1343,7 @@ const AIIntegrationPanel: React.FC = () => {
               />
               <p className="text-xs text-muted-foreground">
                 Write the full prompt template. You can use variables like
-                {{ context }} that will be replaced with actual content.
+                {'{{'} context {'}}'}  that will be replaced with actual content.
               </p>
             </div>
           </div>

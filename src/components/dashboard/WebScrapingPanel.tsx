@@ -57,6 +57,7 @@ import {
   Crosshair,
   MousePointer,
   Save,
+  Brain,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -116,8 +117,12 @@ interface ScrapingResultFilter {
   excludePagination: boolean;
 }
 
-const WebScrapingPanel = () => {
-  const [activeTab, setActiveTab] = useState("jobs-list");
+interface WebScrapingPanelProps {
+  defaultTab?: string;
+}
+
+const WebScrapingPanel: React.FC<WebScrapingPanelProps> = ({ defaultTab = "jobs-list" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [selectedJob, setSelectedJob] = useState<ScrapingJob | null>(null);
   const [selectedData, setSelectedData] = useState<ScrapedData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -425,11 +430,15 @@ const WebScrapingPanel = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center mb-4">
-                <Input
-                  placeholder="Search jobs..."
-                  className="max-w-sm mr-2"
-                  prefix={<Search className="h-4 w-4 text-muted-foreground" />}
-                />
+                <div className="relative max-w-sm mr-2">
+  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+    <Search className="h-4 w-4" />
+  </span>
+  <Input
+    placeholder="Search jobs..."
+    className="pl-10" // add left padding for the icon
+  />
+</div>
                 <Select defaultValue="all">
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by status" />
@@ -1089,13 +1098,15 @@ const WebScrapingPanel = () => {
             <CardContent className="space-y-4">
               <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Search in content..."
-                    className="max-w-sm"
-                    prefix={
-                      <Search className="h-4 w-4 text-muted-foreground" />
-                    }
-                  />
+                  <div className="relative max-w-sm">
+  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+    <Search className="h-4 w-4" />
+  </span>
+  <Input
+    placeholder="Search in content..."
+    className="pl-10"
+  />
+</div>
                   <Select defaultValue="all">
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Filter by job" />

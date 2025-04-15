@@ -76,8 +76,12 @@ interface KnowledgeCategory {
   itemCount: number;
 }
 
-const KnowledgeBasePanel = () => {
-  const [activeTab, setActiveTab] = useState("items");
+interface KnowledgeBasePanelProps {
+  defaultTab?: string;
+}
+
+const KnowledgeBasePanel: React.FC<KnowledgeBasePanelProps> = ({ defaultTab = "items" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [selectedItem, setSelectedItem] = useState<KnowledgeItem | null>(null);
   const [selectedCategory, setSelectedCategory] =
     useState<KnowledgeCategory | null>(null);

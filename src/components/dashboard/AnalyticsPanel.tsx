@@ -35,10 +35,16 @@ import {
   Zap,
   BarChart,
   Activity,
+  FileText,
+  Badge,
 } from "lucide-react";
 
-const AnalyticsPanel = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+interface AnalyticsPanelProps {
+  defaultTab?: string;
+}
+
+const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [timeRange, setTimeRange] = useState("30d");
 
   const renderMetricCard = (

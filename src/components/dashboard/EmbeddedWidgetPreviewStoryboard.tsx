@@ -1,5 +1,4 @@
-import React from "react";
-import EmbeddedWidgetPreview from "./EmbeddedWidgetPreview";
+import { EmbeddedWidgetPreview } from "./EmbeddedWidgetPreview";
 
 export default function EmbeddedWidgetPreviewStoryboard() {
   return (
@@ -13,6 +12,7 @@ export default function EmbeddedWidgetPreviewStoryboard() {
           autoOpen={true}
           welcomeMessage="Hello! How can I help you today?"
           darkMode={false}
+          quickResponses={["How does this work?", "What can you help with?", "Can I speak to a human?"]}
         />
       </div>
     </div>

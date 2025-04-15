@@ -50,8 +50,12 @@ interface ContextRule {
   isActive: boolean;
 }
 
-const ContextRulesPanel = () => {
-  const [activeTab, setActiveTab] = useState("rules-list");
+interface ContextRulesPanelProps {
+  defaultTab?: string;
+}
+
+const ContextRulesPanel: React.FC<ContextRulesPanelProps> = ({ defaultTab = "rules-list" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [selectedRule, setSelectedRule] = useState<ContextRule | null>(null);
   const [testInput, setTestInput] = useState("");
   const [testResult, setTestResult] = useState<{
@@ -154,7 +158,7 @@ const ContextRulesPanel = () => {
             ? `Matched pattern: ${selectedRule.pattern}`
             : "No regex match found";
         } catch (error) {
-          details = `Error in regex pattern: ${error.message}`;
+          details = `Error in regex pattern: ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
         break;
 
@@ -182,7 +186,7 @@ const ContextRulesPanel = () => {
             ? `Custom pattern matched: ${selectedRule.pattern}`
             : "No custom pattern match found";
         } catch (error) {
-          details = `Error in custom pattern: ${error.message}`;
+          details = `Error in custom pattern: ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
         break;
     }

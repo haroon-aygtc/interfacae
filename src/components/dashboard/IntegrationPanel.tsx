@@ -11,14 +11,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Code, Copy, ExternalLink, Check } from "lucide-react";
+import { Code, Copy, ExternalLink, Check, X } from "lucide-react";
 import EmbeddedWidgetPreview from "./EmbeddedWidgetPreview";
+import LanguageSelector from "./LanguageSelector";
 
-const IntegrationPanel = () => {
+interface IntegrationPanelProps {
+  defaultTab?: string;
+}
+
+const IntegrationPanel: React.FC<IntegrationPanelProps> = ({ defaultTab = "widget" }) => {
   const [widgetColor, setWidgetColor] = useState("#7c3aed");
   const [widgetSize, setWidgetSize] = useState([60]);
   const [widgetPosition, setWidgetPosition] = useState("bottom-right");
@@ -27,10 +32,27 @@ const IntegrationPanel = () => {
     "Hello! How can I help you today?",
   );
   const [darkMode, setDarkMode] = useState(false);
+  const [quickResponses, setQuickResponses] = useState<string[]>([
+    "How does this work?",
+    "What can you help with?",
+    "Can I speak to a human?"
+  ]);
+  const [newQuickResponse, setNewQuickResponse] = useState("");
+  const [language, setLanguage] = useState("en");
+  const [showAIInsights, setShowAIInsights] = useState(true);
   const [copied, setCopied] = useState<{
     iframe: boolean;
     webComponent: boolean;
   }>({ iframe: false, webComponent: false });
+
+  // Predefined templates for quick setup
+  const widgetTemplates = [
+    { name: "Default Purple", color: "#7c3aed", darkMode: false, language: "en" },
+    { name: "Corporate Blue", color: "#2563eb", darkMode: false, language: "en" },
+    { name: "Dark Mode", color: "#8b5cf6", darkMode: true, language: "en" },
+    { name: "Spanish", color: "#f59e0b", darkMode: false, language: "es" },
+    { name: "French", color: "#3b82f6", darkMode: false, language: "fr" },
+  ];
 
   const iframeCode = `<iframe
   src="https://your-domain.com/chat-widget"
@@ -49,6 +71,9 @@ const IntegrationPanel = () => {
   auto-open="${autoOpen}"
   welcome-message="${welcomeMessage}"
   dark-mode="${darkMode}"
+  quick-responses="${quickResponses.join(',')}"
+  language="${language}"
+  show-ai-insights="${showAIInsights}"
 ></ai-chat-widget>`;
 
   const handleCopyCode = (type: "iframe" | "webComponent") => {
@@ -65,6 +90,30 @@ const IntegrationPanel = () => {
     setAutoOpen(true);
     setWelcomeMessage("Hello! How can I help you today?");
     setDarkMode(false);
+    setQuickResponses(["How does this work?", "What can you help with?", "Can I speak to a human?"]);
+    setLanguage("en");
+    setShowAIInsights(true);
+  };
+
+  const handleAddQuickResponse = () => {
+    if (newQuickResponse.trim() !== "") {
+      setQuickResponses([...quickResponses, newQuickResponse.trim()]);
+      setNewQuickResponse("");
+    }
+  };
+
+  const handleRemoveQuickResponse = (index: number) => {
+    const updatedResponses = [...quickResponses];
+    updatedResponses.splice(index, 1);
+    setQuickResponses(updatedResponses);
+  };
+
+  const applyTemplate = (template: { name: string; color: string; darkMode: boolean; language?: string }) => {
+    setWidgetColor(template.color);
+    setDarkMode(template.darkMode);
+    if (template.language) {
+      setLanguage(template.language);
+    }
   };
 
   return (
@@ -77,7 +126,7 @@ const IntegrationPanel = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="widget" className="w-full">
+      <Tabs defaultValue={defaultTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="widget">Widget Configuration</TabsTrigger>
           <TabsTrigger value="code">Integration Code</TabsTrigger>
@@ -87,6 +136,34 @@ const IntegrationPanel = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <TabsContent value="widget" className="space-y-6">
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Quick Setup Templates</CardTitle>
+                  <CardDescription>
+                    Choose a predefined template to quickly set up your widget
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {widgetTemplates.map((template, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => applyTemplate(template)}
+                        className="p-3 border rounded-md hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <div
+                          className="w-full h-6 rounded mb-2"
+                          style={{ backgroundColor: template.color }}
+                          aria-label={`Color: ${template.color}`}
+                        ></div>
+                        <div className="text-sm font-medium">{template.name}</div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Widget Appearance</CardTitle>
@@ -191,6 +268,26 @@ const IntegrationPanel = () => {
                     />
                   </div>
 
+                  <LanguageSelector
+                    selectedLanguage={language}
+                    onChange={setLanguage}
+                    label="Widget Language"
+                  />
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="show-ai-insights">Show AI Insights</Label>
+                      <Switch
+                        id="show-ai-insights"
+                        checked={showAIInsights}
+                        onCheckedChange={setShowAIInsights}
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Display AI performance metrics and knowledge source information
+                    </p>
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="welcome-message">Welcome Message</Label>
                     <Textarea
@@ -200,6 +297,47 @@ const IntegrationPanel = () => {
                       placeholder="Enter a welcome message for your visitors"
                       className="min-h-[80px]"
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Quick Response Options</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Add suggested responses that users can click instead of typing
+                    </p>
+
+                    <div className="flex gap-2 mb-2">
+                      <Input
+                        value={newQuickResponse}
+                        onChange={(e) => setNewQuickResponse(e.target.value)}
+                        placeholder="Add a quick response option"
+                        className="flex-1"
+                      />
+                      <Button onClick={handleAddQuickResponse} type="button">
+                        Add
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2 max-h-40 overflow-y-auto p-2 border rounded-md">
+                      {quickResponses.map((response, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm truncate">{response}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveQuickResponse(index)}
+                            className="h-6 w-6 p-0"
+                            type="button"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      {quickResponses.length === 0 && (
+                        <div className="text-sm text-gray-500 text-center py-2">
+                          No quick responses added
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
@@ -377,6 +515,9 @@ const IntegrationPanel = () => {
                   autoOpen={autoOpen}
                   welcomeMessage={welcomeMessage}
                   darkMode={darkMode}
+                  quickResponses={quickResponses}
+                  language={language}
+                  showAIInsights={showAIInsights}
                 />
               </CardContent>
             </Card>

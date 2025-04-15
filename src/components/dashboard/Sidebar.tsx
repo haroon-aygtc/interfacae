@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "../../routes";
 import {
   LayoutDashboard,
   Bot,
@@ -11,8 +12,11 @@ import {
   Code,
   Settings,
   LogOut,
-  User,
+  Users,
   Sparkles,
+  BookOpen,
+  MessageSquare,
+  Brain,
 } from "lucide-react";
 
 interface NavItemProps {
@@ -63,23 +67,9 @@ const NavItem = ({
   );
 };
 
-interface SidebarProps {
-  activeSection?: string;
-  onSectionChange?: (section: any) => void;
-}
-
-const Sidebar = ({
-  activeSection = "overview",
-  onSectionChange,
-}: SidebarProps) => {
+const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-
-  const handleNavClick = (section: string) => {
-    if (onSectionChange) {
-      onSectionChange(section);
-    }
-  };
 
   return (
     <div className="flex h-full w-[280px] flex-col border-r bg-background">
@@ -100,31 +90,34 @@ const Sidebar = ({
           <NavItem
             icon={<LayoutDashboard className="h-4 w-4" />}
             label="Dashboard"
-            href="#"
-            isActive={activeSection === "overview"}
-            onClick={() => handleNavClick("overview")}
+            href={ROUTES.DASHBOARD}
+            isActive={currentPath === ROUTES.DASHBOARD}
           />
           <NavItem
             icon={<Bot className="h-4 w-4" />}
             label="AI Model Configuration"
-            href="#"
-            isActive={activeSection === "ai-models"}
-            onClick={() => handleNavClick("ai-models")}
+            href={ROUTES.AI_MODELS}
+            isActive={currentPath.startsWith(ROUTES.AI_MODELS)}
+            badge="New"
+          />
+          <NavItem
+            icon={<Bot className="h-4 w-4" />}
+            label="AI Integration"
+            href={ROUTES.AI_INTEGRATION}
+            isActive={currentPath.startsWith(ROUTES.AI_INTEGRATION)}
             badge="New"
           />
           <NavItem
             icon={<FileText className="h-4 w-4" />}
             label="Context Rules"
-            href="#"
-            isActive={activeSection === "context-rules"}
-            onClick={() => handleNavClick("context-rules")}
+            href={ROUTES.CONTEXT_RULES}
+            isActive={currentPath.startsWith(ROUTES.CONTEXT_RULES)}
           />
           <NavItem
             icon={<PenTool className="h-4 w-4" />}
             label="Prompt Templates"
-            href="#"
-            isActive={activeSection === "prompt-templates"}
-            onClick={() => handleNavClick("prompt-templates")}
+            href={ROUTES.PROMPT_TEMPLATES}
+            isActive={currentPath.startsWith(ROUTES.PROMPT_TEMPLATES)}
           />
         </nav>
 
@@ -135,16 +128,14 @@ const Sidebar = ({
           <NavItem
             icon={<BarChart2 className="h-4 w-4" />}
             label="Analytics Dashboard"
-            href="#"
-            isActive={activeSection === "analytics"}
-            onClick={() => handleNavClick("analytics")}
+            href={ROUTES.ANALYTICS}
+            isActive={currentPath.startsWith(ROUTES.ANALYTICS)}
           />
           <NavItem
             icon={<Globe className="h-4 w-4" />}
             label="Web Scraping"
-            href="#"
-            isActive={activeSection === "web-scraping"}
-            onClick={() => handleNavClick("web-scraping")}
+            href={ROUTES.WEB_SCRAPING}
+            isActive={currentPath.startsWith(ROUTES.WEB_SCRAPING)}
           />
         </nav>
 
@@ -153,18 +144,42 @@ const Sidebar = ({
         </div>
         <nav className="grid gap-1 px-2">
           <NavItem
+            icon={<MessageSquare className="h-4 w-4" />}
+            label="Chat Widget Test"
+            href={ROUTES.CHAT_WIDGET_TEST}
+            isActive={currentPath.startsWith(ROUTES.CHAT_WIDGET_TEST)}
+            badge="New"
+          />
+          <NavItem
+            icon={<Brain className="h-4 w-4" />}
+            label="AI Insights"
+            href={ROUTES.AI_INSIGHTS}
+            isActive={currentPath.startsWith(ROUTES.AI_INSIGHTS)}
+            badge="New"
+          />
+          <NavItem
             icon={<Code className="h-4 w-4" />}
             label="Integration"
-            href="#"
-            isActive={activeSection === "integration"}
-            onClick={() => handleNavClick("integration")}
+            href={ROUTES.INTEGRATION}
+            isActive={currentPath.startsWith(ROUTES.INTEGRATION)}
+          />
+          <NavItem
+            icon={<BookOpen className="h-4 w-4" />}
+            label="Knowledge Base"
+            href={ROUTES.KNOWLEDGE_BASE}
+            isActive={currentPath.startsWith(ROUTES.KNOWLEDGE_BASE)}
+          />
+          <NavItem
+            icon={<Users className="h-4 w-4" />}
+            label="User Management"
+            href={ROUTES.USER_MANAGEMENT}
+            isActive={currentPath.startsWith(ROUTES.USER_MANAGEMENT)}
           />
           <NavItem
             icon={<Settings className="h-4 w-4" />}
             label="System Settings"
-            href="#"
-            isActive={activeSection === "system-config"}
-            onClick={() => handleNavClick("system-config")}
+            href={ROUTES.SYSTEM_CONFIG}
+            isActive={currentPath.startsWith(ROUTES.SYSTEM_CONFIG)}
           />
         </nav>
       </div>
@@ -186,6 +201,7 @@ const Sidebar = ({
           icon={<LogOut className="h-4 w-4" />}
           label="Logout"
           href="/logout"
+          isActive={currentPath === "/logout"}
         />
       </div>
     </div>

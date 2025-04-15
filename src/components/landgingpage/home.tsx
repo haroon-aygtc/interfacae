@@ -174,6 +174,9 @@ function HeroSection() {
             <Button size="lg" variant="outline" className="px-8 py-6 text-lg" onClick={() => navigate("/about")}>
               Learn More
             </Button>
+            <Button size="lg" variant="secondary" className="px-8 py-6 text-lg" onClick={() => navigate("/dashboard")}> 
+              Go to Admin Dashboard
+            </Button>
           </motion.div>
         </motion.div>
       </div>

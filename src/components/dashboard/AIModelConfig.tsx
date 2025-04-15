@@ -26,10 +26,14 @@ import { CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 
 interface AIModelConfigProps {
   onSave?: (config: any) => void;
+  defaultTab?: string;
 }
 
-const AIModelConfig: React.FC<AIModelConfigProps> = ({ onSave = () => {} }) => {
-  const [activeTab, setActiveTab] = useState("general");
+const AIModelConfig: React.FC<AIModelConfigProps> = ({
+  onSave = () => {},
+  defaultTab = "general"
+}) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [provider, setProvider] = useState("gemini");
   const [temperature, setTemperature] = useState([0.7]);
   const [maxTokens, setMaxTokens] = useState(1024);

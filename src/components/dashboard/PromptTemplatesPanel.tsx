@@ -41,6 +41,7 @@ import {
   FileText,
   Tag,
   Check,
+  SearchIcon,
 } from "lucide-react";
 
 interface PromptVariable {
@@ -60,8 +61,12 @@ interface PromptTemplate {
   updatedAt: Date;
 }
 
-const PromptTemplatesPanel = () => {
-  const [activeTab, setActiveTab] = useState("templates-list");
+interface PromptTemplatesPanelProps {
+  defaultTab?: string;
+}
+
+const PromptTemplatesPanel: React.FC<PromptTemplatesPanelProps> = ({ defaultTab = "templates-list" }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [selectedTemplate, setSelectedTemplate] =
     useState<PromptTemplate | null>(null);
   const [testVariables, setTestVariables] = useState<Record<string, string>>(
@@ -177,7 +182,7 @@ const PromptTemplatesPanel = () => {
     setSelectedTemplate(template);
     setActiveTab("create-edit");
     // Initialize test variables with default values
-    const initialVariables = {};
+    const initialVariables: Record<string, string> = {};
     template.variables.forEach((variable) => {
       initialVariables[variable.name] = variable.defaultValue;
     });
@@ -273,7 +278,7 @@ const PromptTemplatesPanel = () => {
                 <Input
                   placeholder="Search templates..."
                   className="max-w-sm mr-2"
-                  prefix={<Search className="h-4 w-4 text-muted-foreground" />}
+                  prefix={<SearchIcon className="h-4 w-4 text-muted-foreground" />}
                 />
                 <Select defaultValue="all">
                   <SelectTrigger className="w-[180px]">
@@ -421,7 +426,7 @@ const PromptTemplatesPanel = () => {
                   defaultValue={selectedTemplate?.template || ""}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Use {{ variable_name }} syntax for variables that will be
+                  Use {"{{"} variable_name {"}}"}  syntax for variables that will be
                   replaced when the template is used.
                 </p>
               </div>
@@ -618,3 +623,5 @@ const PromptTemplatesPanel = () => {
 };
 
 export default PromptTemplatesPanel;
+
+
