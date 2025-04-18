@@ -1,23 +1,33 @@
 import { Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import AIModelConfig from "./components/dashboard/AIModelConfig";
-import AIIntegrationPanel from "./components/dashboard/AIIntegrationPanel";
-import ContextRulesPanel from "./components/dashboard/ContextRulesPanel";
-import PromptTemplatesPanel from "./components/dashboard/PromptTemplatesPanel";
-import AnalyticsPanel from "./components/dashboard/AnalyticsPanel";
-import WebScrapingPanel from "./components/dashboard/WebScrapingPanel";
-import IntegrationPanel from "./components/dashboard/IntegrationPanel";
-import SystemConfigPanel from "./components/dashboard/SystemConfigPanel";
-import KnowledgeBasePanel from "./components/dashboard/KnowledgeBasePanel";
-import UserManagementPanel from "./components/dashboard/UserManagementPanel";
-import Home from "./components/landgingpage/home";
-import DashboardLayout from "./components/layouts/DashboardLayout";
-import SelectorGroupManager from "./components/dashboard/SelectorGroupManager";
-import ChatWidgetTestPage from "./components/dashboard/ChatWidgetTestPage";
-import AIInsightsPanel from "./components/dashboard/AIInsightsPanel";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+// Authentication protection removed for testing
+import {
+  AIModelConfigWrapper,
+  ContextRulesPanelWrapper,
+  PromptTemplatesPanelWrapper,
+  AnalyticsPanelWrapper,
+  WebScrapingPanelWrapper,
+  IntegrationPanelWrapper,
+  SystemConfigPanelWrapper,
+  KnowledgeBasePanelWrapper,
+  UserManagementPanelWrapper,
+  AIInsightsPanelWrapper
+} from "./components/dashboard/wrappers/AdminPanelWrappers";
+import AIIntegrationPanelWrapper from "./components/dashboard/wrappers/AIIntegrationPanelWrapper";
+import Home from "./components/landing-page/Home";
+import MockSelectorGroupManagerWrapper from "./components/dashboard/wrappers/MockSelectorGroupManagerWrapper";
+import ChatWidgetTestPageWrapper from "./components/dashboard/wrappers/ChatWidgetTestPageWrapper";
 
 // Define route paths as constants for easy reference
 export const ROUTES = {
+  // Auth routes
+  LOGIN: "/login",
+  REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password",
   // Main routes
   HOME: "/",
   DASHBOARD: "/dashboard",
@@ -143,266 +153,94 @@ export const ROUTES = {
 
 // Define the routes configuration
 const routes = [
+  // Auth routes
+  {
+    path: ROUTES.LOGIN,
+    element: <Login />,
+  },
+  {
+    path: ROUTES.REGISTER,
+    element: <Register />,
+  },
+  {
+    path: ROUTES.FORGOT_PASSWORD,
+    element: <ForgotPassword />,
+  },
   {
     path: ROUTES.HOME,
     element: <Home />,
   },
+  // Dashboard route (public for testing)
   {
     path: ROUTES.DASHBOARD,
     element: <Dashboard />,
   },
+  // AI Models routes
   {
     path: ROUTES.AI_MODELS,
-    element: <DashboardLayout title="AI Model Configuration"><AIModelConfig /></DashboardLayout>,
+    element: <AIModelConfigWrapper />,
   },
+  // AI Integration routes
   {
     path: ROUTES.AI_INTEGRATION,
-    element: <DashboardLayout title="AI Integration"><AIIntegrationPanel /></DashboardLayout>,
+    element: <AIIntegrationPanelWrapper />,
   },
+  // Context Rules routes
   {
     path: ROUTES.CONTEXT_RULES,
-    element: <DashboardLayout title="Context Rules Management"><ContextRulesPanel /></DashboardLayout>,
+    element: <ContextRulesPanelWrapper />,
   },
+  // Prompt Templates routes
   {
     path: ROUTES.PROMPT_TEMPLATES,
-    element: <DashboardLayout title="Prompt Templates"><PromptTemplatesPanel /></DashboardLayout>,
+    element: <PromptTemplatesPanelWrapper />,
   },
+  // Analytics routes
   {
     path: ROUTES.ANALYTICS,
-    element: <DashboardLayout title="Analytics Dashboard"><AnalyticsPanel /></DashboardLayout>,
+    element: <AnalyticsPanelWrapper />,
   },
+  // Web Scraping routes
   {
     path: ROUTES.WEB_SCRAPING,
-    element: <DashboardLayout title="Web Scraping Management"><WebScrapingPanel /></DashboardLayout>,
+    element: <WebScrapingPanelWrapper />,
   },
-  {
-    path: ROUTES.INTEGRATION,
-    element: <DashboardLayout title="Integration Settings"><IntegrationPanel /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.SYSTEM_CONFIG,
-    element: <DashboardLayout title="System Configuration"><SystemConfigPanel /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.KNOWLEDGE_BASE,
-    element: <DashboardLayout title="Knowledge Base Management"><KnowledgeBasePanel /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.USER_MANAGEMENT,
-    element: <DashboardLayout title="User Management"><UserManagementPanel /></DashboardLayout>,
-  },
-
-  // Analytics sub-routes
-  {
-    path: ROUTES.ANALYTICS_OVERVIEW,
-    element: <DashboardLayout title="Analytics Overview"><AnalyticsPanel defaultTab="overview" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.ANALYTICS_ENGAGEMENT,
-    element: <DashboardLayout title="Engagement Analytics"><AnalyticsPanel defaultTab="engagement" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.ANALYTICS_PERFORMANCE,
-    element: <DashboardLayout title="Performance Analytics"><AnalyticsPanel defaultTab="performance" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.ANALYTICS_CONTENT,
-    element: <DashboardLayout title="Content Analytics"><AnalyticsPanel defaultTab="content" /></DashboardLayout>,
-  },
-
-  // AI Models sub-routes
-  {
-    path: ROUTES.AI_MODELS_GENERAL,
-    element: <DashboardLayout title="AI Model General Settings"><AIModelConfig defaultTab="general" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.AI_MODELS_ADVANCED,
-    element: <DashboardLayout title="AI Model Advanced Settings"><AIModelConfig defaultTab="advanced" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.AI_MODELS_TESTING,
-    element: <DashboardLayout title="AI Model Testing"><AIModelConfig defaultTab="testing" /></DashboardLayout>,
-  },
-
-  // AI Integration sub-routes
-  {
-    path: ROUTES.AI_INTEGRATION_CONFIG,
-    element: <DashboardLayout title="AI Integration Configuration"><AIIntegrationPanel defaultTab="configuration" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.AI_INTEGRATION_TEST,
-    element: <DashboardLayout title="AI Integration Testing"><AIIntegrationPanel defaultTab="test" /></DashboardLayout>,
-  },
-
-  // Context Rules sub-routes
-  {
-    path: ROUTES.CONTEXT_RULES_LIST,
-    element: <DashboardLayout title="Context Rules List"><ContextRulesPanel defaultTab="rules-list" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.CONTEXT_RULES_CREATE,
-    element: <DashboardLayout title="Create Context Rule"><ContextRulesPanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.CONTEXT_RULES_EDIT,
-    element: <DashboardLayout title="Edit Context Rule"><ContextRulesPanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.CONTEXT_RULES_TEST,
-    element: <DashboardLayout title="Test Context Rules"><ContextRulesPanel defaultTab="test-rules" /></DashboardLayout>,
-  },
-
-  // Prompt Templates sub-routes
-  {
-    path: ROUTES.PROMPT_TEMPLATES_LIST,
-    element: <DashboardLayout title="Prompt Templates Library"><PromptTemplatesPanel defaultTab="templates-list" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.PROMPT_TEMPLATES_CREATE,
-    element: <DashboardLayout title="Create Prompt Template"><PromptTemplatesPanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.PROMPT_TEMPLATES_EDIT,
-    element: <DashboardLayout title="Edit Prompt Template"><PromptTemplatesPanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.PROMPT_TEMPLATES_TEST,
-    element: <DashboardLayout title="Test Prompt Template"><PromptTemplatesPanel defaultTab="test-template" /></DashboardLayout>,
-  },
-
-  // Web Scraping sub-routes
-  {
-    path: ROUTES.WEB_SCRAPING_JOBS,
-    element: <DashboardLayout title="Web Scraping Jobs"><WebScrapingPanel defaultTab="jobs-list" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.WEB_SCRAPING_CREATE,
-    element: <DashboardLayout title="Create Scraping Job"><WebScrapingPanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.WEB_SCRAPING_EDIT,
-    element: <DashboardLayout title="Edit Scraping Job"><WebScrapingPanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.WEB_SCRAPING_PREVIEW,
-    element: <DashboardLayout title="Live Scraping Preview"><WebScrapingPanel defaultTab="live-preview" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.WEB_SCRAPING_SELECTORS,
-    element: <DashboardLayout title="Selector Groups"><WebScrapingPanel defaultTab="selector-groups" /></DashboardLayout>,
-  },
+  // Selector Groups route
   {
     path: ROUTES.SELECTOR_GROUPS,
-    element: <DashboardLayout title="Selector Groups">
-      <SelectorGroupManager
-        selectorGroups={[]}
-        onCreateGroup={() => {}}
-        onUpdateGroup={() => {}}
-        onDeleteGroup={() => {}}
-        onCreateSelector={() => {}}
-        onUpdateSelector={() => {}}
-        onDeleteSelector={() => {}}
-      />
-    </DashboardLayout>,
+    element: <MockSelectorGroupManagerWrapper />,
   },
+  // Integration routes
   {
-    path: ROUTES.WEB_SCRAPING_DATA,
-    element: <DashboardLayout title="Scraped Data Review"><WebScrapingPanel defaultTab="data-review" /></DashboardLayout>,
+    path: ROUTES.INTEGRATION,
+    element: <IntegrationPanelWrapper />,
   },
-  {
-    path: ROUTES.WEB_SCRAPING_SETTINGS,
-    element: <DashboardLayout title="Web Scraping Settings"><WebScrapingPanel defaultTab="settings" /></DashboardLayout>,
-  },
-
-  // Integration sub-routes
+  // Chat Widget Test route
   {
     path: ROUTES.CHAT_WIDGET_TEST,
-    element: <DashboardLayout title="Chat Widget Test"><ChatWidgetTestPage /></DashboardLayout>,
+    element: <ChatWidgetTestPageWrapper />,
   },
+  // AI Insights route
   {
     path: ROUTES.AI_INSIGHTS,
-    element: <DashboardLayout title="AI Insights"><AIInsightsPanel /></DashboardLayout>,
+    element: <AIInsightsPanelWrapper />,
   },
+  // System Config routes
   {
-    path: ROUTES.INTEGRATION_WIDGET,
-    element: <DashboardLayout title="Widget Configuration"><IntegrationPanel defaultTab="widget" /></DashboardLayout>,
+    path: ROUTES.SYSTEM_CONFIG,
+    element: <SystemConfigPanelWrapper />,
   },
+  // Knowledge Base routes
   {
-    path: ROUTES.INTEGRATION_CODE,
-    element: <DashboardLayout title="Integration Code"><IntegrationPanel defaultTab="code" /></DashboardLayout>,
+    path: ROUTES.KNOWLEDGE_BASE,
+    element: <KnowledgeBasePanelWrapper />,
   },
+  // User Management routes
   {
-    path: ROUTES.INTEGRATION_ADVANCED,
-    element: <DashboardLayout title="Advanced Integration Settings"><IntegrationPanel defaultTab="advanced" /></DashboardLayout>,
+    path: ROUTES.USER_MANAGEMENT,
+    element: <UserManagementPanelWrapper />,
   },
-
-  // System Config sub-routes
-  {
-    path: ROUTES.SYSTEM_CONFIG_AUTH,
-    element: <DashboardLayout title="Authentication Settings"><SystemConfigPanel defaultTab="authentication" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.SYSTEM_CONFIG_API,
-    element: <DashboardLayout title="API Connections"><SystemConfigPanel defaultTab="api-connections" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.SYSTEM_CONFIG_SESSIONS,
-    element: <DashboardLayout title="Session Management"><SystemConfigPanel defaultTab="sessions" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.SYSTEM_CONFIG_STORAGE,
-    element: <DashboardLayout title="Storage Settings"><SystemConfigPanel defaultTab="storage" /></DashboardLayout>,
-  },
-
-  // Knowledge Base sub-routes
-  {
-    path: ROUTES.KNOWLEDGE_BASE_ITEMS,
-    element: <DashboardLayout title="Knowledge Base Items"><KnowledgeBasePanel defaultTab="items" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.KNOWLEDGE_BASE_CATEGORIES,
-    element: <DashboardLayout title="Knowledge Base Categories"><KnowledgeBasePanel defaultTab="categories" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.KNOWLEDGE_BASE_CREATE,
-    element: <DashboardLayout title="Create Knowledge Item"><KnowledgeBasePanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.KNOWLEDGE_BASE_EDIT,
-    element: <DashboardLayout title="Edit Knowledge Item"><KnowledgeBasePanel defaultTab="create-edit" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.KNOWLEDGE_BASE_IMPORT,
-    element: <DashboardLayout title="Import/Export Knowledge Base"><KnowledgeBasePanel defaultTab="import-export" /></DashboardLayout>,
-  },
-
-  // User Management sub-routes
-  {
-    path: ROUTES.USER_MANAGEMENT_USERS,
-    element: <DashboardLayout title="User List"><UserManagementPanel defaultTab="users" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.USER_MANAGEMENT_ROLES,
-    element: <DashboardLayout title="Roles & Permissions"><UserManagementPanel defaultTab="roles" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.USER_MANAGEMENT_ADD_USER,
-    element: <DashboardLayout title="Add User"><UserManagementPanel defaultTab="edit-user" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.USER_MANAGEMENT_EDIT_USER,
-    element: <DashboardLayout title="Edit User"><UserManagementPanel defaultTab="edit-user" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.USER_MANAGEMENT_ADD_ROLE,
-    element: <DashboardLayout title="Add Role"><UserManagementPanel defaultTab="edit-role" /></DashboardLayout>,
-  },
-  {
-    path: ROUTES.USER_MANAGEMENT_EDIT_ROLE,
-    element: <DashboardLayout title="Edit Role"><UserManagementPanel defaultTab="edit-role" /></DashboardLayout>,
-  },
-
-  // Main section redirects
+  // Redirects
   {
     path: ROUTES.ADMIN,
     element: <Navigate to={ROUTES.DASHBOARD} replace />,
@@ -447,101 +285,10 @@ const routes = [
     path: ROUTES.KNOWLEDGE,
     element: <Navigate to={ROUTES.KNOWLEDGE_BASE} replace />,
   },
-
-  // Specific tab redirects
-  {
-    path: ROUTES.ANALYTICS_STATS,
-    element: <Navigate to={ROUTES.ANALYTICS_OVERVIEW} replace />,
-  },
-  {
-    path: ROUTES.ANALYTICS_USERS,
-    element: <Navigate to={ROUTES.ANALYTICS_ENGAGEMENT} replace />,
-  },
-  {
-    path: ROUTES.ANALYTICS_METRICS,
-    element: <Navigate to={ROUTES.ANALYTICS_PERFORMANCE} replace />,
-  },
-  {
-    path: ROUTES.ANALYTICS_REPORTS,
-    element: <Navigate to={ROUTES.ANALYTICS_CONTENT} replace />,
-  },
-  {
-    path: ROUTES.MODEL_SETTINGS,
-    element: <Navigate to={ROUTES.AI_MODELS_GENERAL} replace />,
-  },
-  {
-    path: ROUTES.MODEL_ADVANCED,
-    element: <Navigate to={ROUTES.AI_MODELS_ADVANCED} replace />,
-  },
-  {
-    path: ROUTES.MODEL_TEST,
-    element: <Navigate to={ROUTES.AI_MODELS_TESTING} replace />,
-  },
-  {
-    path: ROUTES.INTEGRATION_SETUP,
-    element: <Navigate to={ROUTES.INTEGRATION_WIDGET} replace />,
-  },
-  {
-    path: ROUTES.INTEGRATION_EMBED,
-    element: <Navigate to={ROUTES.INTEGRATION_CODE} replace />,
-  },
-  {
-    path: ROUTES.RULES_LIST,
-    element: <Navigate to={ROUTES.CONTEXT_RULES_LIST} replace />,
-  },
-  {
-    path: ROUTES.RULES_CREATE,
-    element: <Navigate to={ROUTES.CONTEXT_RULES_CREATE} replace />,
-  },
-  {
-    path: ROUTES.RULES_TEST,
-    element: <Navigate to={ROUTES.CONTEXT_RULES_TEST} replace />,
-  },
-  {
-    path: ROUTES.TEMPLATES_LIST,
-    element: <Navigate to={ROUTES.PROMPT_TEMPLATES_LIST} replace />,
-  },
-  {
-    path: ROUTES.TEMPLATES_CREATE,
-    element: <Navigate to={ROUTES.PROMPT_TEMPLATES_CREATE} replace />,
-  },
-  {
-    path: ROUTES.TEMPLATES_TEST,
-    element: <Navigate to={ROUTES.PROMPT_TEMPLATES_TEST} replace />,
-  },
-  {
-    path: ROUTES.SCRAPING_JOBS,
-    element: <Navigate to={ROUTES.WEB_SCRAPING_JOBS} replace />,
-  },
-  {
-    path: ROUTES.SCRAPING_CREATE,
-    element: <Navigate to={ROUTES.WEB_SCRAPING_CREATE} replace />,
-  },
-  {
-    path: ROUTES.SCRAPING_PREVIEW,
-    element: <Navigate to={ROUTES.WEB_SCRAPING_PREVIEW} replace />,
-  },
-  {
-    path: ROUTES.SCRAPING_SELECTORS,
-    element: <Navigate to={ROUTES.SELECTOR_GROUPS} replace />,
-  },
-  {
-    path: ROUTES.SYSTEM_AUTH,
-    element: <Navigate to={ROUTES.SYSTEM_CONFIG_AUTH} replace />,
-  },
-  {
-    path: ROUTES.SYSTEM_API,
-    element: <Navigate to={ROUTES.SYSTEM_CONFIG_API} replace />,
-  },
-  {
-    path: ROUTES.SYSTEM_STORAGE,
-    element: <Navigate to={ROUTES.SYSTEM_CONFIG_STORAGE} replace />,
-  },
-
-  // Catch-all redirect to dashboard
+  // Default redirect for unknown routes
   {
     path: "*",
-    element: <Navigate to={ROUTES.DASHBOARD} replace />,
+    element: <Navigate to={ROUTES.HOME} replace />,
   },
 ];
 

@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Globe } from "lucide-react";
 
 interface LanguageSelectorProps {
   selectedLanguage: string;
@@ -13,9 +20,11 @@ export const languages = [
   { code: "en", name: "English" },
   { code: "es", name: "Spanish" },
   { code: "fr", name: "French" },
+  { code: "ar", name: "Arabic" },
 ];
 
-const LanguageSelector: React.FC<LanguageSelectorProps> = ({
+// Named export for the full featured component with props
+export const LanguageSelectorWithProps: React.FC<LanguageSelectorProps> = ({
   selectedLanguage,
   onChange,
   label = "Language",
@@ -46,4 +55,33 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   );
 };
 
-export default LanguageSelector;
+// Simple version with no props, to be used in the header
+export const LanguageSelector: React.FC = () => {
+  const [language, setLanguage] = useState("en");
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="Select language">
+          <Globe className="h-5 w-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {languages.map((lang) => (
+          <DropdownMenuItem
+            key={lang.code}
+            className="cursor-pointer"
+            onClick={() => setLanguage(lang.code)}
+          >
+            <span className={language === lang.code ? "font-medium" : ""}>
+              {lang.name}
+            </span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+// Default export for backward compatibility
+export default LanguageSelectorWithProps;

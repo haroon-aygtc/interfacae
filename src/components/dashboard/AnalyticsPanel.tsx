@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -21,7 +21,7 @@ import {
   BarChart3,
   LineChart,
   PieChart,
-  Download,
+
   Calendar,
   ArrowUpRight,
   ArrowDownRight,
@@ -37,6 +37,7 @@ import {
   Activity,
   FileText,
   Badge,
+  Cog,
 } from "lucide-react";
 
 interface AnalyticsPanelProps {
@@ -53,7 +54,7 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
     change: number,
     icon: React.ReactNode,
   ) => (
-    <Card>
+    <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
@@ -89,29 +90,23 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
   );
 
   return (
-    <div className="w-full h-full bg-background p-6">
-      <div className="flex flex-col space-y-6 max-w-6xl mx-auto">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-          <div className="flex items-center gap-2">
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-[180px]">
-                <Calendar className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Select time range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
-                <SelectItem value="6m">Last 6 months</SelectItem>
-                <SelectItem value="1y">Last year</SelectItem>
-                <SelectItem value="custom">Custom range</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline">
-              <Download className="mr-2 h-4 w-4" /> Export
-            </Button>
-          </div>
+    <div className="w-full h-full bg-background">
+      <div className="space-y-6 max-w-5xl mx-auto">
+        <div className="flex justify-end items-center mb-4">
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className="w-[180px]">
+              <Calendar className="mr-2 h-4 w-4" />
+              <SelectValue placeholder="Select time range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7d">Last 7 days</SelectItem>
+              <SelectItem value="30d">Last 30 days</SelectItem>
+              <SelectItem value="90d">Last 90 days</SelectItem>
+              <SelectItem value="6m">Last 6 months</SelectItem>
+              <SelectItem value="1y">Last year</SelectItem>
+              <SelectItem value="custom">Custom range</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -151,14 +146,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>Conversation Trends</CardTitle>
                   <CardDescription>
                     Daily conversation volume over time
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {renderChartPlaceholder(
                     "Conversation trend visualization",
                     <LineChart className="h-8 w-8 text-muted-foreground/50" />,
@@ -166,14 +161,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>User Distribution</CardTitle>
                   <CardDescription>
                     Users by device and platform
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {renderChartPlaceholder(
                     "User distribution visualization",
                     <PieChart className="h-8 w-8 text-muted-foreground/50" />,
@@ -182,14 +177,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
               </Card>
             </div>
 
-            <Card>
-              <CardHeader>
+            <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-2">
                 <CardTitle>Top Query Categories</CardTitle>
                 <CardDescription>
                   Most common types of user queries
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {renderChartPlaceholder(
                   "Query categories visualization",
                   <BarChart3 className="h-8 w-8 text-muted-foreground/50" />,
@@ -221,14 +216,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>User Engagement Over Time</CardTitle>
                   <CardDescription>
                     How users interact with the chat widget
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {renderChartPlaceholder(
                     "User engagement visualization",
                     <Activity className="h-8 w-8 text-muted-foreground/50" />,
@@ -236,14 +231,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>Feedback Distribution</CardTitle>
                   <CardDescription>
                     User feedback on AI responses
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-8">
+                <CardContent className="pt-6 space-y-8">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label>Positive Feedback</Label>
@@ -286,14 +281,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
               </Card>
             </div>
 
-            <Card>
-              <CardHeader>
+            <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-2">
                 <CardTitle>User Journey Analysis</CardTitle>
                 <CardDescription>
                   How users progress through conversations
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {renderChartPlaceholder(
                   "User journey visualization",
                   <Activity className="h-8 w-8 text-muted-foreground/50" />,
@@ -331,14 +326,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>Response Time Distribution</CardTitle>
                   <CardDescription>
                     Performance metrics across different query types
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {renderChartPlaceholder(
                     "Response time visualization",
                     <BarChart className="h-8 w-8 text-muted-foreground/50" />,
@@ -346,14 +341,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>Model Performance Comparison</CardTitle>
                   <CardDescription>
                     Comparing different AI models and configurations
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {renderChartPlaceholder(
                     "Model comparison visualization",
                     <BarChart3 className="h-8 w-8 text-muted-foreground/50" />,
@@ -362,14 +357,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
               </Card>
             </div>
 
-            <Card>
-              <CardHeader>
+            <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-2">
                 <CardTitle>Performance Over Time</CardTitle>
                 <CardDescription>
                   How system performance has changed over time
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {renderChartPlaceholder(
                   "Performance trend visualization",
                   <LineChart className="h-8 w-8 text-muted-foreground/50" />,
@@ -400,14 +395,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
               )}
             </div>
 
-            <Card>
-              <CardHeader>
+            <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-2">
                 <CardTitle>Popular Topics</CardTitle>
                 <CardDescription>
                   Most frequently discussed topics in conversations
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-2 mb-6">
                   {[
                     { name: "Product Features", count: 342 },
@@ -440,14 +435,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
             </Card>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>Content Effectiveness</CardTitle>
                   <CardDescription>
                     How well different content sources perform
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {renderChartPlaceholder(
                     "Content effectiveness visualization",
                     <BarChart3 className="h-8 w-8 text-muted-foreground/50" />,
@@ -455,14 +450,14 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ defaultTab = "overview"
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
+              <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+                <CardHeader className="bg-muted/30 pb-2">
                   <CardTitle>Knowledge Gaps</CardTitle>
                   <CardDescription>
                     Areas where content is missing or insufficient
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   <div className="space-y-4">
                     {[
                       {

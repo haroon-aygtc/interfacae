@@ -1,0 +1,734 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+AI Chat System Feature Overview
+
+
+
+Tech Stack Overview
+
+
+
+
+
+
+Goal:Create an animated, luxurious landing page introducing all Al Yalayis business divisions:
+
+
+
+Al Yalayis Government Transaction Center – A to Z UAE government services.
+
+
+
+Al Yalayis Property – Handling real estate & land transactions across UAE.
+
+
+
+Super Wheel – Luxury VIP transport services across UAE.
+
+
+
+Al Yalayis Labor Supplier – Workforce solutions for all industries.
+
+
+
+UI Customization:
+
+
+
+Light/dark modes, font size, color schemes
+
+
+
+Smooth transitions and animations
+
+
+
+Live runtime UI modifications🔌 Automated Embedding
+
+Lightweight JavaScript loader for seamless integration into websites.
+
+
+
+💬 Dynamic Prompt Handling
+
+Route prompts dynamically to Gemini or Hugging Face based on:
+
+Business selection
+
+Contextual rules
+
+🧠 AI Chat Response Enhancement (Prebuild + Branded)
+
+📥 User Input Processing
+
+When a user sends a message, the system merges the input with a prebuild prompt and optionally selected:
+
+Context data (e.g., user's current session, domain, recent queries)
+
+Knowledge Base entries
+
+Project-specific internal storage or JSON data
+
+🧑‍💻 Admin-Controlled Data Fusion
+
+Admin can select one or multiple data sources to enrich the AI's understanding:
+
+📂 Internal JSON or scraped data
+
+📚 Knowledge base segments
+
+⚙️ Project-level context or notes
+
+The selected sources are dynamically injected into the prompt.
+
+🎨 Response Formatting Engine
+
+After AI returns a raw response:
+
+🔡 Format into predefined structure with:
+
+🟨 Headings
+
+✅ Bullet points
+
+🔍 Highlights
+
+🔗 Clickable links
+
+🎨 Apply brand-specific styling (colors, tone, icons)
+
+📢 Response acts like the brand voice itself, not generic AI
+
+🔄 Branded Follow-Up Engine
+
+Admin can define follow-up question(s) for continued engagement:
+
+🎯 Positioning:
+
+At the start, end, or inline with the response
+
+✍️ Editable in admin panel
+
+🧩 Use case: “Would you like to apply now?” / “Need help with something else?”
+
+Deliver to user
+
+Save log
+
+📝 Dynamic Response Formatting
+
+Standardized Output Includes:
+
+Titles
+
+Bullet points
+
+Sections
+
+Markdown/HTML tags
+
+Tone matching per brand/user
+
+🗂️ User Chat History Management
+
+Secure storage of sessions and messages
+
+Pagination & efficient search
+
+⚙️ AI Integration & Controls
+
+Route queries through configured AI models
+
+Apply filters and content restrictions
+
+Determine inclusion of data using smart tools
+
+🛠️ Admin Panel Features
+
+Manage:
+
+Embedding scripts
+
+Context rules
+
+Prompt templates
+
+Analytics & logs
+
+Model configs
+
+AI Modules
+
+Scraping Engine
+
+Response Formatter
+
+Follow-Up Builder
+
+Branding Manager
+
+Chat Widget & Embedding
+
+Guest User Registration
+
+User Management
+
+Role & Permission System
+
+Live Monitoring
+
+Chat History Viewer
+
+Advanced Scraping System
+
+JSON File Editor
+
+Data Storage
+
+Knowledge Source Manager
+
+Contextual Filters
+
+Analytics & Insights
+
+Feedback Collection
+
+System Settings Manager
+
+Multi-Tenant Management
+
+Backup System
+
+Export & Import Manager
+
+Audit Logs
+
+🕸️ LIVE Web Scraping Engine
+
+🔍 Input Options
+
+Single URL
+
+JSON list of URLs
+
+🌐 Embedded Browser
+
+Browse site inside tool
+
+Click-to-select elements
+
+Auto-generate selectors (CSS/XPath)
+
+🧩 Selector Group Management
+
+Save per domain
+
+Reuse for future scraping
+
+Stored in Database PostgreSQL
+
+🛒 Scraping Engine Capabilities
+
+Static & dynamic scraping (headless)
+
+Proxy & stealth support
+
+AJAX detection + smart wait
+
+Extract:
+
+Text, Lists, Tables, Metadata, Images
+
+🧹 AI-Assisted Text Cleaning
+
+Modes: Basic / Thorough / Semantic
+
+Auto-categorize extracted content
+
+📤 Output Options
+
+Formats: Raw HTML, JSON, CSV, Text
+
+Storage: Database or Project Internal file directory
+
+⚙️ Scraping Options Panel
+
+CSS/XPath toggle
+
+Enable/disable:
+
+Proxies
+
+AI text cleaner
+
+Table/Image/List mode
+
+Output format
+
+Live Preview
+
+🧾 Prompt & AI Management
+
+🧠 Prompt Manager
+
+Create and manage prompt templates
+
+🔗 Prompt Templating Engine
+
+Add variables: tone, system, fallback logic
+
+Link prompts to specific AI models
+
+🧩 AI Module Manager
+
+Add/remove/configure models:
+
+Gemini
+
+Groke
+
+Hugging Face
+
+Assign models per:
+
+Use case
+
+Domain
+
+Brand
+
+🔄 AI Model Activation
+
+Enable/disable per:
+
+Tenant
+
+Query type
+
+Use case
+
+🔧 AI Configuration Panel
+
+Set:
+
+Temperature
+
+Max tokens
+
+System prompt
+
+System Knowledge Base
+
+System Context
+
+System Response Formatter
+
+System Branding
+
+System Follow-Up Question and Options
+
+Retry logic
+
+Fallback model
+
+Role/persona injection
+
+🧰 Unified Response Formatting
+
+Consistent output across AI and scraping:
+
+Headings
+
+Bullets
+
+Lists
+
+Sections
+
+HTML/Markdown
+
+🔄 Follow-Up Builder
+
+Visual builder for conversation logic:
+
+Step-by-step
+
+Conditional (Yes/No)
+
+Multi-option
+
+Dynamic based on user input
+
+🎨 Branding Manager
+
+Customize:
+
+Logo, colors, fonts
+
+Tone & greeting
+
+Widget text
+
+💬 Chat Widget & Embedding
+
+Integration Options:
+
+Script
+
+iFrame
+
+Shadow DOM
+
+CDN
+
+Command-line
+
+Customization:
+
+Size, theme, language, position (floating/fullscreen)
+
+Title, subtitle, welcome message
+
+Icon, sound toggle
+
+👤 Guest User Registration
+
+Form-based registration:
+
+Full Name
+
+Email
+
+Phone
+
+Configurable required fields
+
+Creates session + user profile
+
+👥 User Management & Monitoring
+
+View & manage:
+
+Guest vs. Authenticated users
+
+Session history
+
+User activity
+
+Role-Based Access & Admin Controls
+
+👤 Role Management
+
+Define roles (Admin, Moderator, Scraper, Analyst, Client Admin, etc.). Each role has scoped permissions.
+
+🧩 Permission System
+
+Control access to each module: Chat Logs, Scraping, Prompt Manager, Model Settings, Branding, Export, Feedback, etc.
+
+🧪 Granular Controls
+
+Enable fine-tuned access: read-only, edit, delete, create. Prevent accidental system-wide changes.
+
+🔁 Role-Based Routing
+
+Automatically redirect users to relevant dashboards based on role. For example, scraper → scraping UI, analyst → analytics page.
+
+🧾 Activity Logs by Role
+
+Log every action by user/role: edits, deletions, model swaps, feedback responses, etc. Include timestamps and affected modules.
+
+📛 Client-Specific Roles
+
+In multi-tenant setups, allow client admins to create custom roles within their namespace (e.g., HR Viewer, Agent Manager).
+
+🔍 Live Monitoring
+
+Real-time view of:
+
+Active users
+
+Current queries
+
+Time on site
+
+Chat activity
+
+🧾 Chat History Viewer
+
+Logs include:
+
+Timestamps
+
+AI model used
+
+Response source (AI vs Scraped)
+
+Feedback & status
+
+🕷️ Advanced Scraping System
+
+🖥️ Live Scraping Interface
+
+Live preview site
+
+Drag & click element tagging
+
+Save selectors
+
+📦 Selector Grouping & Reuse
+
+Store per:
+
+Domain
+
+Page type
+
+Share/edit across scrapers
+
+🎛️ Scraping Options
+
+Scrape:
+
+Single URL
+
+Multiple URLs
+
+JSON Bulk URLs
+
+Output types:
+
+Text
+
+HTML
+
+Metadata
+
+JSON
+
+📁 Scraped Data Export
+
+Filter options:
+
+Clean text, Metadata, HTML, Images, Ads
+
+Formats:
+
+CSV, JSON, Markdown, TXT
+
+📊 Scraper Monitor
+
+Track:
+
+Last run
+
+Page count
+
+Errors
+
+Result size
+
+🔍 Scraping Filters
+
+Exclude:
+
+Headers
+
+Footers
+
+Ads
+
+Media
+
+Pagination
+
+🧠 AI Fallback System
+
+If scraper fails:
+
+Send query to AI
+
+AI generates replacement data
+
+Optional save for reuse
+
+🛠️ JSON File Editor
+
+Manually edit:
+
+Scraped
+
+AI-generated
+
+Fallback content
+
+Version-controlled UI
+
+🗃️ Data Storage Layer
+
+Store to:
+
+PostgreSQL (structured)
+
+Vector DB (semantic)
+
+Hybrid architecture
+
+🧭 Knowledge Source Manager
+
+Prioritize sources:
+
+Scraping
+
+Files
+
+AI
+
+APIs
+
+Rules for:
+
+Merge
+
+Override
+
+Fallback
+
+🔍 Contextual Filters
+
+Restrict queries by:
+
+Keyword
+
+Category
+
+Intent
+
+Domain
+
+📈 Analytics & Insights
+
+View:
+
+Top queries
+
+Model usage
+
+AI fallbacks
+
+Retention rate
+
+Avg. response time
+
+Funnel (Follow-ups)
+
+Export: CSV / JSON
+
+⭐ Feedback Collection
+
+Collect:
+
+Thumbs up/down
+
+Comments
+
+Star ratings (1–5)
+
+Feedback type (e.g. unclear, incorrect)
+
+🔐 System Settings Manager
+
+Platform controls:
+
+Theme
+
+Rate limits
+
+Session expiry
+
+Logging
+
+Language fallback
+
+🏢 Multi-Tenant Support
+
+Isolate:
+
+Models
+
+Branding
+
+Data
+
+Settings
+
+Each client = separate namespace
+
+💾 Backup System
+
+Auto-backup:
+
+Chats
+
+Scraped content
+
+Logs
+
+System configs
+
+Download or schedule to cloud/local
+
+📤📥 Export & Import Manager
+
+Bulk transfer of:
+
+Chat logs
+
+Templates
+
+JSON files
+
+AI configs
+
+Scraping rules
+
+📋 Audit Trail & Logs
+
+Track:
+
+Admin logins
+
+Config changes
+
+AI usage
+
+Scraping events
+
+Failures & alerts
+
+🎨 UI Styling Guidelines
+
+🎨 Color
+
+Brand-aligned theme colors
+
+🧱 Layout
+
+Clean, modular admin panel with clear nav
+
+🔤 Typography
+
+Sans-serif fonts, clear text hierarchy
+
+🌀 Animation
+
+Subtle transitions for:
+
+Loaders
+
+Message appearance
+
+Navigation interactions
+

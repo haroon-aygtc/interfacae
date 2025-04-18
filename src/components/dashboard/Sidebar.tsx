@@ -2,6 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "../../routes";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   LayoutDashboard,
   Bot,
@@ -42,8 +44,8 @@ const NavItem = ({
       className={cn(
         "flex items-center justify-between rounded-md px-3 py-2 text-sm transition-all duration-200",
         isActive
-          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
-          : "text-muted-foreground hover:bg-gray-100 hover:text-gray-900",
+          ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-md"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground",
       )}
       onClick={onClick}
     >
@@ -51,7 +53,7 @@ const NavItem = ({
         <div
           className={cn(
             "flex h-6 w-6 items-center justify-center rounded-md",
-            isActive ? "bg-white/20" : "bg-gray-100",
+            isActive ? "bg-white/20" : "bg-muted",
           )}
         >
           {icon}
@@ -70,20 +72,22 @@ const NavItem = ({
 const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { theme } = useTheme();
 
   return (
     <div className="flex h-full w-[280px] flex-col border-r bg-background">
-      <div className="flex h-16 items-center border-b px-4">
+      <div className="flex h-16 items-center justify-between border-b px-4">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-md bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <h2 className="text-lg font-semibold">AI Chat Admin</h2>
         </div>
+        <ThemeToggle />
       </div>
 
       <div className="flex-1 overflow-auto py-6">
-        <div className="px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="px-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Main
         </div>
         <nav className="grid gap-1 px-2 mb-6">
@@ -121,7 +125,7 @@ const Sidebar = () => {
           />
         </nav>
 
-        <div className="px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="px-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Analytics
         </div>
         <nav className="grid gap-1 px-2 mb-6">
@@ -139,7 +143,7 @@ const Sidebar = () => {
           />
         </nav>
 
-        <div className="px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="px-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Configuration
         </div>
         <nav className="grid gap-1 px-2">
@@ -185,16 +189,16 @@ const Sidebar = () => {
       </div>
 
       <div className="mt-auto border-t p-4">
-        <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-gray-50">
+        <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-muted/50">
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
             A
           </div>
           <div className="flex-1">
             <div className="text-sm font-medium">Admin User</div>
-            <div className="text-xs text-gray-500">admin@example.com</div>
+            <div className="text-xs text-muted-foreground">admin@example.com</div>
           </div>
-          <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
-            <Settings className="h-4 w-4 text-gray-600" />
+          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors">
+            <Settings className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
         <NavItem
