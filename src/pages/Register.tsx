@@ -9,10 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { theme } = useTheme();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -60,7 +62,7 @@ export default function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -69,35 +71,21 @@ export default function Register() {
 
     setIsSubmitting(true);
 
-    try {
-      const success = await register(formData.name, formData.email, formData.password);
+    // Call the register function from AuthContext
+    register(formData.name, formData.email, formData.password);
 
-      if (success) {
-        toast({
-          title: "Registration Successful",
-          description: "Your account has been created successfully.",
-          variant: "default",
-        });
+    // Show success toast
+    toast({
+      title: "Registration Successful",
+      description: "Your account has been created successfully.",
+      variant: "default",
+    });
 
-        // Navigate to the dashboard
-        navigate(ROUTES.DASHBOARD);
-      } else {
-        toast({
-          title: "Registration Failed",
-          description: "Unable to create your account. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast({
-        title: "Registration Error",
-        description: "An unexpected error occurred. Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
+    // Navigate to the dashboard after a short delay
+    setTimeout(() => {
+      navigate(ROUTES.DASHBOARD);
       setIsSubmitting(false);
-    }
+    }, 800);
   };
 
   return (
@@ -108,7 +96,7 @@ export default function Register() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name" className={`${theme === 'dark' ? 'text-white' : 'text-[#09090B]'}`}>Full Name</Label>
             <Input
               id="name"
               name="name"
@@ -117,15 +105,15 @@ export default function Register() {
               value={formData.name}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={errors.name ? "border-destructive" : ""}
+              className={`${theme === 'dark' ? 'bg-[#09090B]/30 text-white border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50' : 'bg-white text-[#09090B] border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50'} ${errors.name ? "border-destructive" : ""}`}
             />
             {errors.name && (
-              <p className="text-sm text-destructive">{errors.name}</p>
+              <p className="text-sm text-[#D8A23B]">{errors.name}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className={`${theme === 'dark' ? 'text-white' : 'text-[#09090B]'}`}>Email</Label>
             <Input
               id="email"
               name="email"
@@ -134,15 +122,15 @@ export default function Register() {
               value={formData.email}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={errors.email ? "border-destructive" : ""}
+              className={`${theme === 'dark' ? 'bg-[#09090B]/30 text-white border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50' : 'bg-white text-[#09090B] border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50'} ${errors.email ? "border-destructive" : ""}`}
             />
             {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
+              <p className="text-sm text-[#D8A23B]">{errors.email}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className={`${theme === 'dark' ? 'text-white' : 'text-[#09090B]'}`}>Password</Label>
             <Input
               id="password"
               name="password"
@@ -151,15 +139,15 @@ export default function Register() {
               value={formData.password}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={errors.password ? "border-destructive" : ""}
+              className={`${theme === 'dark' ? 'bg-[#09090B]/30 text-white border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50' : 'bg-white text-[#09090B] border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50'} ${errors.password ? "border-destructive" : ""}`}
             />
             {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
+              <p className="text-sm text-[#D8A23B]">{errors.password}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword" className={`${theme === 'dark' ? 'text-white' : 'text-[#09090B]'}`}>Confirm Password</Label>
             <Input
               id="confirmPassword"
               name="confirmPassword"
@@ -168,10 +156,10 @@ export default function Register() {
               value={formData.confirmPassword}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={errors.confirmPassword ? "border-destructive" : ""}
+              className={`${theme === 'dark' ? 'bg-[#09090B]/30 text-white border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50' : 'bg-white text-[#09090B] border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50'} ${errors.confirmPassword ? "border-destructive" : ""}`}
             />
             {errors.confirmPassword && (
-              <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+              <p className="text-sm text-[#D8A23B]">{errors.confirmPassword}</p>
             )}
           </div>
         </div>
@@ -183,16 +171,16 @@ export default function Register() {
               checked={acceptTerms}
               onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
               disabled={isSubmitting}
-              className={errors.terms ? "border-destructive" : ""}
+              className={`border-[#D8A23B]/30 ${errors.terms ? "border-destructive" : ""}`}
             />
             <Label
               htmlFor="terms"
-              className="text-sm font-normal cursor-pointer"
+              className={`text-sm font-normal cursor-pointer ${theme === 'dark' ? 'text-white/80' : 'text-[#09090B]/80'}`}
             >
               I agree to the{" "}
               <Link
                 to="/terms-conditions"
-                className="text-primary hover:text-primary/90"
+                className="text-[#D8A23B] hover:text-[#D8A23B]/90"
                 target="_blank"
               >
                 Terms of Service
@@ -200,7 +188,7 @@ export default function Register() {
               and{" "}
               <Link
                 to="/privacy-policy"
-                className="text-primary hover:text-primary/90"
+                className="text-[#D8A23B] hover:text-[#D8A23B]/90"
                 target="_blank"
               >
                 Privacy Policy
@@ -208,13 +196,13 @@ export default function Register() {
             </Label>
           </div>
           {errors.terms && (
-            <p className="text-sm text-destructive">{errors.terms}</p>
+            <p className="text-sm text-[#D8A23B]">{errors.terms}</p>
           )}
         </div>
 
         <Button
           type="submit"
-          className="w-full"
+          className="w-full bg-[#D8A23B] text-[#09090B] hover:bg-[#D8A23B]/90 border-none"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
@@ -230,11 +218,11 @@ export default function Register() {
           )}
         </Button>
 
-        <div className="text-center text-sm">
+        <div className={`text-center text-sm ${theme === 'dark' ? 'text-white/80' : 'text-[#09090B]/80'}`}>
           Already have an account?{" "}
           <Link
             to={ROUTES.LOGIN}
-            className="text-primary font-medium hover:text-primary/90"
+            className="text-[#D8A23B] font-medium hover:text-[#D8A23B]/90"
           >
             Sign in
           </Link>

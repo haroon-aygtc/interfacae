@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+
 import { LanguageSelector } from "./LanguageSelector";
 import {
   DropdownMenu,
@@ -25,7 +25,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Logo } from "@/components/landing-page/Logo";
 
 interface DashboardHeaderProps {
   onToggleSidebar?: () => void;
@@ -72,8 +71,8 @@ function DashboardHeader({
   const unreadCount = notifications.filter((notification) => !notification.read).length;
 
   return (
-    <header className="sticky top-0 z-30 h-16 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-30 h-20 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-20 items-center justify-between px-6 max-w-7xl mx-auto w-full">
         {/* Left Section - Logo and Sidebar Toggle */}
         <div className="flex items-center gap-2">
           <Button
@@ -86,9 +85,8 @@ function DashboardHeader({
             {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          <div className="hidden md:block">
-            <Logo className="h-8 w-auto" />
-          </div>
+          {/* Empty div to maintain spacing */}
+          <div></div>
         </div>
 
         {/* Right Section - Notifications, Theme Toggle, Language, Profile */}
@@ -96,12 +94,13 @@ function DashboardHeader({
           {/* Notifications */}
           <DropdownMenu open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+              <Button variant="ghost" size="icon" className="relative hover:bg-[#D8A23B]/10" aria-label="Notifications">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <Badge
                     className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center"
-                    variant="destructive"
+                    variant="default"
+                    style={{ backgroundColor: '#D8A23B', color: '#09090B' }}
                   >
                     {unreadCount}
                   </Badge>
@@ -111,7 +110,7 @@ function DashboardHeader({
             <DropdownMenuContent align="end" className="w-80">
               <DropdownMenuLabel className="flex items-center justify-between">
                 <span>Notifications</span>
-                <Button variant="ghost" size="sm" className="h-auto px-2 text-xs font-normal">
+                <Button variant="ghost" size="sm" className="h-auto px-2 text-xs font-normal text-[#D8A23B] hover:text-[#D8A23B]/80 hover:bg-[#D8A23B]/10">
                   Mark all as read
                 </Button>
               </DropdownMenuLabel>
@@ -141,7 +140,7 @@ function DashboardHeader({
 
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="justify-center text-sm font-medium cursor-pointer"
+                className="justify-center text-sm font-medium cursor-pointer text-[#D8A23B] hover:text-[#D8A23B]/80 hover:bg-[#D8A23B]/10"
                 onClick={() => navigate("/dashboard/notifications")}
               >
                 View all notifications
@@ -149,8 +148,8 @@ function DashboardHeader({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Theme Toggle */}
-          <ThemeToggle />
+          {/* Spacer for layout balance */}
+          <div></div>
 
           {/* Language Selector */}
           <LanguageSelector />
@@ -158,8 +157,8 @@ function DashboardHeader({
           {/* User Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="pl-3 pr-2 gap-1" aria-label="User menu">
-                <Avatar className="h-7 w-7">
+              <Button variant="ghost" className="pl-3 pr-2 gap-1 hover:bg-[#D8A23B]/10" aria-label="User menu">
+                <Avatar className="h-8 w-8 border border-[#D8A23B]/30">
                   <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name || "User"} />
                   <AvatarFallback>
                     {user?.name
@@ -191,16 +190,16 @@ function DashboardHeader({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate("/dashboard/profile")}>
+              <DropdownMenuItem onClick={() => navigate("/dashboard/profile")} className="hover:bg-[#D8A23B]/10 hover:text-[#D8A23B]">
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/dashboard/settings")}>
+              <DropdownMenuItem onClick={() => navigate("/dashboard/settings")} className="hover:bg-[#D8A23B]/10 hover:text-[#D8A23B]">
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
+              <DropdownMenuItem onClick={handleLogout} className="hover:bg-[#D8A23B]/10 hover:text-[#D8A23B]">
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>

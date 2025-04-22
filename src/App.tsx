@@ -5,6 +5,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { Toaster } from "./components/ui/toaster";
 import routes from "./routes";
 import './styles/theme.css';
+import './styles/scrollbar.css';
 
 function App() {
   return (

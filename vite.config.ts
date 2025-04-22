@@ -1,7 +1,7 @@
 import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import { tempo } from "tempo-devtools/dist/vite";
+// Tempo dependencies removed
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,9 +10,9 @@ export default defineConfig({
       ? "/"
       : process.env.VITE_BASE_PATH || "/",
   optimizeDeps: {
-    entries: ["src/main.tsx", "src/tempobook/**/*"],
+    entries: ["src/main.tsx"],
   },
-  plugins: [react(), tempo()],
+  plugins: [react()],
   resolve: {
     preserveSymlinks: true,
     alias: {
@@ -23,16 +23,11 @@ export default defineConfig({
     host: true,
     port: 3000,
     strictPort: false,
-    // Using proper typing for allowedHosts
-    allowedHosts: process.env.TEMPO === "true" ? true : undefined,
     cors: true,
     hmr: {
-      clientPort: process.env.TEMPO === "true" ? 443 : 3000,
-      host:
-        process.env.TEMPO === "true"
-          ? "festive-leakey4-993dm.view-3.tempo-dev.app"
-          : "localhost",
-      protocol: process.env.TEMPO === "true" ? "wss" : "ws",
+      clientPort: 3000,
+      host: "localhost",
+      protocol: "ws",
       timeout: 120000,
     },
   },

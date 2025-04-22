@@ -9,11 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { theme } = useTheme();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +43,7 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -50,42 +52,28 @@ export default function Login() {
 
     setIsSubmitting(true);
 
-    try {
-      const success = await login(email, password);
-
-      if (success) {
-        // Save to local storage if remember me is checked
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-        } else {
-          localStorage.removeItem("rememberedEmail");
-        }
-
-        toast({
-          title: "Login Successful",
-          description: "Welcome back! You are now logged in.",
-          variant: "default",
-        });
-
-        // Navigate to the intended destination
-        navigate(from, { replace: true });
-      } else {
-        toast({
-          title: "Login Failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        title: "Login Error",
-        description: "An unexpected error occurred. Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+    // Save to local storage if remember me is checked
+    if (rememberMe) {
+      localStorage.setItem("rememberedEmail", email);
+    } else {
+      localStorage.removeItem("rememberedEmail");
     }
+
+    // Call the login function from AuthContext
+    login(email, password);
+
+    // Show success toast
+    toast({
+      title: "Login Successful",
+      description: "Welcome back! You are now logged in.",
+      variant: "default",
+    });
+
+    // Navigate to the intended destination
+    setTimeout(() => {
+      navigate(from, { replace: true });
+      setIsSubmitting(false);
+    }, 800);
   };
 
   // Load remembered email on component mount
@@ -105,7 +93,7 @@ export default function Login() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className={`${theme === 'dark' ? 'text-white' : 'text-[#09090B]'}`}>Email</Label>
             <Input
               id="email"
               type="email"
@@ -113,19 +101,19 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting}
-              className={errors.email ? "border-destructive" : ""}
+              className={`${theme === 'dark' ? 'bg-[#09090B]/30 text-white border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50' : 'bg-white text-[#09090B] border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50'} ${errors.email ? "border-destructive" : ""}`}
             />
             {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
+              <p className="text-sm text-[#D8A23B]">{errors.email}</p>
             )}
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className={`${theme === 'dark' ? 'text-white' : 'text-[#09090B]'}`}>Password</Label>
               <Link
                 to={ROUTES.FORGOT_PASSWORD}
-                className="text-sm text-primary hover:text-primary/90"
+                className="text-sm text-[#D8A23B] hover:text-[#D8A23B]/90"
               >
                 Forgot password?
               </Link>
@@ -137,10 +125,10 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isSubmitting}
-              className={errors.password ? "border-destructive" : ""}
+              className={`${theme === 'dark' ? 'bg-[#09090B]/30 text-white border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50' : 'bg-white text-[#09090B] border-[#D8A23B]/30 focus:border-[#D8A23B] focus:ring-[#D8A23B]/50'} ${errors.password ? "border-destructive" : ""}`}
             />
             {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
+              <p className="text-sm text-[#D8A23B]">{errors.password}</p>
             )}
           </div>
         </div>
@@ -154,7 +142,7 @@ export default function Login() {
           />
           <Label
             htmlFor="remember"
-            className="text-sm font-normal cursor-pointer"
+            className={`text-sm font-normal cursor-pointer ${theme === 'dark' ? 'text-white/80' : 'text-[#09090B]/80'}`}
           >
             Remember me
           </Label>
@@ -162,7 +150,7 @@ export default function Login() {
 
         <Button
           type="submit"
-          className="w-full"
+          className="w-full bg-[#D8A23B] text-[#09090B] hover:bg-[#D8A23B]/90 border-none"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
@@ -178,11 +166,11 @@ export default function Login() {
           )}
         </Button>
 
-        <div className="text-center text-sm">
+        <div className={`text-center text-sm ${theme === 'dark' ? 'text-white/80' : 'text-[#09090B]/80'}`}>
           Don't have an account?{" "}
           <Link
             to={ROUTES.REGISTER}
-            className="text-primary font-medium hover:text-primary/90"
+            className="text-[#D8A23B] font-medium hover:text-[#D8A23B]/90"
           >
             Sign up
           </Link>

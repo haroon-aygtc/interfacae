@@ -123,6 +123,28 @@ interface WebScrapingPanelProps {
 
 const WebScrapingPanel: React.FC<WebScrapingPanelProps> = ({ defaultTab = "jobs-list" }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
+
+  // Listen for URL hash changes to handle external button clicks
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#create-job') {
+        setActiveTab('create-edit');
+        // Clear the hash after handling
+        window.location.hash = '';
+      }
+    };
+
+    // Check hash on initial load
+    handleHashChange();
+
+    // Add event listener for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
   const [selectedJob, setSelectedJob] = useState<ScrapingJob | null>(null);
   const [selectedData, setSelectedData] = useState<ScrapedData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -384,30 +406,7 @@ const WebScrapingPanel: React.FC<WebScrapingPanelProps> = ({ defaultTab = "jobs-
   };
 
   return (
-    <div className="bg-background p-6 rounded-lg w-full h-full">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Web Scraping Management</h1>
-          <p className="text-muted-foreground">
-            Configure and manage web scraping jobs
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() =>
-              (window.location.href =
-                "/tempobook/storyboards/ai-integration-panel")
-            }
-          >
-            <Brain className="mr-2 h-4 w-4" /> AI Integration
-          </Button>
-          <Button onClick={handleCreateNewJob}>
-            <Plus className="mr-2 h-4 w-4" /> Create New Job
-          </Button>
-        </div>
-      </div>
-
+    <div className="bg-background rounded-lg w-full h-full">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="jobs-list">Jobs List</TabsTrigger>

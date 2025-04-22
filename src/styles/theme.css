@@ -1,97 +1,4 @@
-/* Theme Styles */
-
-/* Light Theme (default) */
-:root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --text-primary: #1a1a1a;
-    --text-secondary: #4a5568;
-    --accent-color: #3182ce;
-    --border-color: #e2e8f0;
-    --card-bg: #ffffff;
-    --header-bg: #ffffff;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* Dark Theme */
-body.dark {
-    --bg-primary: #1a202c;
-    --bg-secondary: #2d3748;
-    --text-primary: #f7fafc;
-    --text-secondary: #cbd5e0;
-    --accent-color: #63b3ed;
-    --border-color: #4a5568;
-    --card-bg: #2d3748;
-    --header-bg: #1a202c;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* Luxury Theme */
-body.luxury {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --text-primary: #f7fafc;
-    --text-secondary: #cbd5e0;
-    --accent-color: #c4b5fd;
-    --border-color: #6b46c1;
-    --card-bg: #1e293b;
-    --header-bg: #0f172a;
-    --shadow: 0 4px 10px rgba(196, 181, 253, 0.2);
-
-    /* Additional luxury theme styles */
-    --gold-accent: #d4af37;
-    --purple-accent: #9f7aea;
-    --luxury-gradient: linear-gradient(135deg, #2b2253 0%, #513686 100%);
-}
-
-/* Apply theme variables to elements */
-body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.card,
-.panel {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-}
-
-header,
-.header {
-    background-color: var(--header-bg);
-    border-bottom: 1px solid var(--border-color);
-}
-
-button,
-.button {
-    background-color: var(--accent-color);
-    color: white;
-    transition: all 0.2s ease;
-}
-
-a {
-    color: var(--accent-color);
-}
-
-/* Luxury theme specific elements */
-body.luxury .card,
-body.luxury .panel,
-body.luxury .premium-feature {
-    border: 1px solid var(--gold-accent);
-    background: var(--luxury-gradient);
-}
-
-body.luxury .special-heading {
-    color: var(--gold-accent);
-    text-shadow: 0 0 2px rgba(212, 175, 55, 0.4);
-}
-
-/* Dark mode toggle styling */
-.theme-toggler button {
-    transition: all 0.2s ease;
-}
+/* Consolidated Theme Styles */
 
 /* Animations */
 @keyframes fadeIn {
@@ -114,40 +21,180 @@ body.luxury .special-heading {
     animation-duration: 0.15s;
 }
 
+/* Theme transition */
+:root {
+    --transition-duration: 0.3s;
+}
+
+*,
+*::before,
+*::after {
+    transition: background-color var(--transition-duration) ease-in-out,
+        color var(--transition-duration) ease-in-out,
+        border-color var(--transition-duration) ease-in-out,
+        box-shadow var(--transition-duration) ease-in-out;
+}
+
+/* Base theme colors */
+:root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+    --primary: #0f172a;
+    --primary-foreground: #ffffff;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #0f172a;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #0f172a;
+    --radius: 0.5rem;
+}
+
+/* Dark Theme */
+.dark {
+    --background: #0f172a;
+    --foreground: #f8fafc;
+    --card: #1e293b;
+    --card-foreground: #f8fafc;
+    --popover: #1e293b;
+    --popover-foreground: #f8fafc;
+    --primary: #f8fafc;
+    --primary-foreground: #0f172a;
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --accent: #1e293b;
+    --accent-foreground: #f8fafc;
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+    --border: #1e293b;
+    --input: #1e293b;
+    --ring: #cbd5e1;
+}
+
+/* Luxury Theme */
+.luxury {
+    --primary: #c6a869;
+    --primary-foreground: #0f172a;
+    --accent: #a88a48;
+    --accent-foreground: #ffffff;
+    --border: #c6a869;
+    --ring: #a88a48;
+}
+
+.dark.luxury {
+    --primary: #c6a869;
+    --primary-foreground: #0f172a;
+    --accent: #a88a48;
+    --accent-foreground: #ffffff;
+    --border: #94733a;
+    --ring: #c6a869;
+}
+
+/* Utility classes for theme-compatible styling */
+.bg-background {
+    background-color: var(--background);
+}
+
+.bg-foreground {
+    background-color: var(--foreground);
+}
+
+.bg-card {
+    background-color: var(--card);
+}
+
+.bg-popover {
+    background-color: var(--popover);
+}
+
+.bg-primary {
+    background-color: var(--primary);
+}
+
+.bg-secondary {
+    background-color: var(--secondary);
+}
+
+.bg-muted {
+    background-color: var(--muted);
+}
+
+.bg-accent {
+    background-color: var(--accent);
+}
+
+.bg-destructive {
+    background-color: var(--destructive);
+}
+
+.text-background {
+    color: var(--background);
+}
+
+.text-foreground {
+    color: var(--foreground);
+}
+
+.text-card-foreground {
+    color: var(--card-foreground);
+}
+
+.text-popover-foreground {
+    color: var(--popover-foreground);
+}
+
+.text-primary-foreground {
+    color: var(--primary-foreground);
+}
+
+.text-secondary-foreground {
+    color: var(--secondary-foreground);
+}
+
+.text-muted-foreground {
+    color: var(--muted-foreground);
+}
+
+.text-accent-foreground {
+    color: var(--accent-foreground);
+}
+
+.text-destructive-foreground {
+    color: var(--destructive-foreground);
+}
+
+.border-border {
+    border-color: var(--border);
+}
+
+.border-input {
+    border-color: var(--input);
+}
+
+.ring-ring {
+    --tw-ring-color: var(--ring);
+}
+
 /* Luxury Utility Classes */
-body.luxury .luxury\:bg-gradient-to-r {
-    background-image: linear-gradient(to right, var(--bg-primary), var(--bg-secondary));
+.luxury .luxury\:bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--background), var(--secondary));
 }
 
-body.luxury .luxury\:from-gray-900 {
-    --tw-gradient-from: #1a202c;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 32, 44, 0));
+.luxury .luxury\:border-gold-accent {
+    border-color: var(--primary);
 }
 
-body.luxury .luxury\:to-purple-900 {
-    --tw-gradient-to: #4c1d95;
-}
-
-body.luxury .luxury\:border {
-    border-width: 1px;
-}
-
-body.luxury .luxury\:border-gold-accent {
-    border-color: var(--gold-accent);
-}
-
-body.luxury .luxury\:text-gold-accent {
-    color: var(--gold-accent);
-}
-
-body.luxury .luxury\:bg-gray-900 {
-    background-color: #1a202c;
-}
-
-body.luxury .luxury\:bg-gray-800 {
-    background-color: #2d3748;
-}
-
-body.luxury .luxury\:border-l-4 {
-    border-left-width: 4px;
+.luxury .luxury\:text-gold-accent {
+    color: var(--primary);
 }

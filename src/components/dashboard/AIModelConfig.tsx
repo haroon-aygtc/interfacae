@@ -24,6 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
+import { mockResponses } from "@/lib/mockData";
 
 interface AIModelConfigProps {
   onSave?: (config: any) => void;
@@ -48,21 +49,19 @@ const AIModelConfig: React.FC<AIModelConfigProps> = ({
   );
   const [testResponse, setTestResponse] = useState("");
 
+
+
   const handleTestConnection = () => {
     setTestStatus("loading");
 
-    // Simulate API call
+    // Simulate API call with setTimeout
     setTimeout(() => {
       if (apiKey.length > 10) {
         setTestStatus("success");
-        setTestResponse(
-          "Quantum computing uses quantum bits or qubits which can exist in multiple states simultaneously, unlike classical bits that are either 0 or 1. This property, called superposition, allows quantum computers to process vast amounts of information more efficiently for certain types of problems.",
-        );
+        setTestResponse(mockResponses.testAIModel.success);
       } else {
         setTestStatus("error");
-        setTestResponse(
-          "Error: Invalid API key or connection failed. Please check your credentials and try again.",
-        );
+        setTestResponse(mockResponses.testAIModel.error);
       }
     }, 1500);
   };
@@ -79,7 +78,7 @@ const AIModelConfig: React.FC<AIModelConfigProps> = ({
 
   return (
     <div className="w-full h-full bg-background">
-      <div className="space-y-6 max-w-5xl mx-auto">
+      <div className="space-y-6 w-full">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full max-w-md">
             <TabsTrigger value="general" className="ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm h-8 rounded-sm px-3 py-1.5">General</TabsTrigger>

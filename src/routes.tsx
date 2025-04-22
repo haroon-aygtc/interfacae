@@ -17,7 +17,9 @@ import {
   AIInsightsPanelWrapper
 } from "./components/dashboard/wrappers/AdminPanelWrappers";
 import AIIntegrationPanelWrapper from "./components/dashboard/wrappers/AIIntegrationPanelWrapper";
-import Home from "./components/landing-page/Home";
+import AIModelConfigPanelWrapper from "./components/dashboard/wrappers/AIModelConfigPanelWrapper";
+import AnalyticsDashboardWrapper from "./components/dashboard/wrappers/AnalyticsDashboardWrapper";
+import LuxuryHome from "./components/landing-page/LuxuryHome";
 import MockSelectorGroupManagerWrapper from "./components/dashboard/wrappers/MockSelectorGroupManagerWrapper";
 import ChatWidgetTestPageWrapper from "./components/dashboard/wrappers/ChatWidgetTestPageWrapper";
 
@@ -37,6 +39,7 @@ export const ROUTES = {
   AI_MODELS_GENERAL: "/dashboard/ai-models/general",
   AI_MODELS_ADVANCED: "/dashboard/ai-models/advanced",
   AI_MODELS_TESTING: "/dashboard/ai-models/testing",
+  AI_MODEL_CONFIG: "/dashboard/ai-model-config",
 
   // AI Integration routes
   AI_INTEGRATION: "/dashboard/ai-integration",
@@ -63,6 +66,7 @@ export const ROUTES = {
   ANALYTICS_ENGAGEMENT: "/dashboard/analytics/engagement",
   ANALYTICS_PERFORMANCE: "/dashboard/analytics/performance",
   ANALYTICS_CONTENT: "/dashboard/analytics/content",
+  ANALYTICS_INTERACTIVE: "/dashboard/analytics/interactive",
 
   // Web Scraping routes
   WEB_SCRAPING: "/dashboard/web-scraping",
@@ -168,7 +172,7 @@ const routes = [
   },
   {
     path: ROUTES.HOME,
-    element: <Home />,
+    element: <LuxuryHome />,
   },
   // Dashboard route (public for testing)
   {
@@ -179,6 +183,10 @@ const routes = [
   {
     path: ROUTES.AI_MODELS,
     element: <AIModelConfigWrapper />,
+  },
+  {
+    path: ROUTES.AI_MODEL_CONFIG,
+    element: <AIModelConfigPanelWrapper />,
   },
   // AI Integration routes
   {
@@ -199,6 +207,10 @@ const routes = [
   {
     path: ROUTES.ANALYTICS,
     element: <AnalyticsPanelWrapper />,
+  },
+  {
+    path: ROUTES.ANALYTICS_INTERACTIVE,
+    element: <AnalyticsDashboardWrapper />,
   },
   // Web Scraping routes
   {

@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { mockUsers } from '@/lib/mockData';
 
+// Minimal User interface for mock purposes
 interface User {
   id: string;
   email: string;
@@ -7,129 +9,87 @@ interface User {
   role: string;
 }
 
+// Simplified AuthContext with only what's needed for UI demonstration
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => void;
+  register: (name: string, email: string, password: string) => void;
   logout: () => void;
-  forgotPassword: (email: string) => Promise<boolean>;
-  resetPassword: (token: string, password: string) => Promise<boolean>;
+  forgotPassword: (email: string) => void;
+  resetPassword: (token: string, password: string) => void;
 }
 
+// Create context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
-  isLoading: true,
-  login: async () => false,
-  register: async () => false,
+  isLoading: false,
+  login: () => {},
+  register: () => {},
   logout: () => {},
-  forgotPassword: async () => false,
-  resetPassword: async () => false,
+  forgotPassword: () => {},
+  resetPassword: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
+// Simplified AuthProvider that just provides mock authentication
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Default to logged in with admin user for demo purposes
+  const adminUser = mockUsers.find(u => u.role === 'admin');
+  const [user, setUser] = useState<User | null>(adminUser || null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Check for existing authentication on component mount
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-
-        if (token) {
-          // In a real app, you would validate the token with your backend
-          // For this mock, we'll just assume the token is valid if it exists
-          setUser({
-            id: "1",
-            name: "Admin User",
-            email: "admin@example.com",
-            role: "admin",
-          });
-        }
-      } catch (error) {
-        console.error("Authentication error:", error);
-        localStorage.removeItem("authToken");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const login = async (email: string, password: string): Promise<boolean> => {
+  // All functions just simulate a brief loading state and then complete
+  const simulateLoading = (callback: () => void) => {
     setIsLoading(true);
-
-    try {
-      // In a real app, this would make an API call to your backend
-      // For this mock, we'll just simulate a successful login for specific credentials
-      if (email === "admin@example.com" && password === "password") {
-        // Simulate successful login
-        const user = {
-          id: "1",
-          name: "Admin User",
-          email,
-          role: "admin",
-        };
-
-        // Store token and user info
-        localStorage.setItem("authToken", "mock-jwt-token");
-        setUser(user);
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
-    } finally {
+    setTimeout(() => {
+      callback();
       setIsLoading(false);
-    }
+    }, 500);
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
+  // Mock login - always succeeds with any email that matches a mock user
+  const login = (email: string, password: string) => {
+    simulateLoading(() => {
+      const foundUser = mockUsers.find(u => u.email === email);
+      if (foundUser) {
+        setUser(foundUser);
+      }
+    });
+  };
 
-    try {
-      // In a real app, this would make an API call to your backend
-      // For this mock, we'll just simulate a successful registration
-      const user = {
-        id: "1",
+  // Mock register - always succeeds
+  const register = (name: string, email: string, password: string) => {
+    simulateLoading(() => {
+      const newUser = {
+        id: `user-${Date.now()}`,
         name,
         email,
         role: "user",
       };
-
-      // Store token and user info
-      localStorage.setItem("authToken", "mock-jwt-token");
-      setUser(user);
-      return true;
-    } catch (error) {
-      console.error("Registration error:", error);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
+      setUser(newUser);
+    });
   };
 
+  // Mock logout
   const logout = () => {
-    localStorage.removeItem("authToken");
     setUser(null);
   };
 
-  const forgotPassword = async (email: string): Promise<boolean> => {
-    // In a real app, this would make an API call to trigger a password reset email
-    return true;
+  // Mock password reset functions
+  const forgotPassword = (email: string) => {
+    simulateLoading(() => {
+      console.log(`Mock password reset for ${email}`);
+    });
   };
 
-  const resetPassword = async (token: string, password: string): Promise<boolean> => {
-    // In a real app, this would make an API call to reset the password using the token
-    return true;
+  const resetPassword = (token: string, password: string) => {
+    simulateLoading(() => {
+      console.log(`Mock password reset with token ${token}`);
+    });
   };
 
   return (

@@ -120,10 +120,16 @@ export const WebScrapingPanelWrapper: React.FC = () => {
         { label: "Web Scraping" }
       ]}
       actions={
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Scraping Job
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => window.location.href = "/ai-integration"}>
+            <Brain className="h-4 w-4" />
+            AI Integration
+          </Button>
+          <Button className="gap-2" onClick={() => window.location.hash = 'create-job'}>
+            <Plus className="h-4 w-4" />
+            New Scraping Job
+          </Button>
+        </div>
       }
     >
       <WebScrapingPanel />
